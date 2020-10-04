@@ -1,0 +1,97 @@
+<!--<div class="component">
+  <div cdkDropListGroup>
+    <div class="example-container">
+      <div cdkDropList cdkDropListOrientation="horizontal" [cdkDropListData]="leftSide" class="example-list"
+        (cdkDropListDropped)="drop($event)">
+        <div class="example-box" *ngFor="let item of leftSide" cdkDrag [cdkDragDisabled]="item.disabled"><ng-katex [equation]="item"></ng-katex></div>
+      </div>
+      <div class="equility-sign">=</div>
+      <div cdkDropList cdkDropListOrientation="horizontal" [cdkDropListData]="rightSide" class="example-list"
+        (cdkDropListDropped)="drop($event)">
+        <div class="example-box" *ngFor="let item of rightSide" cdkDrag><ng-katex [equation]="item"></ng-katex></div>
+      </div>
+    </div>
+  </div>
+
+  <ng-katex [equation]="equation"></ng-katex>
+</div>-->
+
+
+<div class="component">
+  <app-input-equation></app-input-equation>
+  <!--<div cdkDropListGroup>
+    <div class="example-container">
+      <app-equation-node [node]=arrayL></app-equation-node>
+    </div>
+    <div class="example-container">
+      <app-equation-node [node]=arrayR></app-equation-node>
+    </div>
+  </div>-->
+  <!--<div>
+    <button class="btn btn-primary" (click)="before()" [disabled]="isDisabledBefore()">Předchozí</button>
+    <button class="btn btn-primary" (click)="next()" [disabled]="isDisabledNext()">Další</button>
+    <button class="btn btn-primary" (click)="reset()">Vrátit rovnice do původní podoby</button>
+  </div>-->
+  <div cdkDropListGroup class="equation-container">
+    <div class="equation-side">
+      <app-equation-controler-node [node]=l></app-equation-controler-node>
+    </div>
+
+
+    <div class="equation-sign noselect">
+      <ng-katex [equation]="equationSign"></ng-katex>
+    </div>
+
+    <div class="equation-side">
+      <app-equation-controler-node [node]=r></app-equation-controler-node>
+    </div>
+  </div>
+
+  <div>
+    Části vybrané k nahrazení: <br>
+    <!--<ng-container *ngIf="selected.toString().length === 0">
+      nic nebylo vybráno
+    </ng-container>
+    <ng-container *ngIf="selected.toString().length !== 0">
+      <ng-katex [equation]="selected.toString()"></ng-katex>
+    </ng-container>-->
+    
+
+    <!--<ul>
+      <li *ngFor="let item of selection"><ng-katex [equation]="item.toString()" ></ng-katex></li>
+    </ul>-->
+  </div>
+  <!--<div>
+    {{calcSelection()}}
+  </div>-->
+  <button class="btn btn-primary" (click)='clearSelection()'>Zrušit výběr</button>
+
+  <!--<button class="btn btn-primary" (click)='print()'>Print</button>-->
+
+
+  <textarea [value]="userInputExpression" class="form-control" (input)="userInputExpression = $event.target.value;"></textarea>
+  <br>
+  <button class="btn btn-primary" (click)="editEquation()">Nahradit</button>
+  <br>
+  <button class="btn btn-primary" (click)="multiplyEquation()">Vynásobit rovnici</button>
+  <br>
+  <button class="btn btn-primary" (click)="divideEquation()">Vydělit rovnici</button>
+  <br>
+  <button class="btn btn-primary" (click)="print()">Vypsat</button>
+  <table>
+    <tr *ngFor='let line of edits; let i = index'>
+      <td style="text-align: right;">
+        <ng-katex [equation]="line[0]"></ng-katex>
+      </td>
+      <td style="text-align: center;">
+        <ng-katex [equation]="line[1]"></ng-katex>
+      </td>
+      <td style="text-align: left;">
+        <ng-katex [equation]="line[2]"></ng-katex>
+      </td>
+      <td style="padding-left: 50px;">
+        <ng-katex [equation]="editChanges[i]"></ng-katex>
+      </td>
+    </tr>
+  </table>
+</div>

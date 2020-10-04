@@ -1,0 +1,40 @@
+<div cdkDropList cdkDropListOrientation="horizontal" [cdkDropListData]="node" class="example-list noselect"
+  [ngClass]="{'fraction': node.value[0].sign === '/'}" (cdkDropListDropped)="drop($event)">
+  <div [ngClass]="getCssClasses(item, i)"  *ngFor="let item of node.value; let i = index" cdkDrag
+    (click)='selectNode(item)' [cdkDragDisabled]="isDisabled(item)">
+
+    <ng-container *ngIf="hasSign(item, i)">
+      <ng-katex [equation]="item.sign"></ng-katex>
+    </ng-container>
+
+
+    <ng-container *ngIf="hasBrackets(item, i)">
+      <ng-katex [equation]="lBracket"></ng-katex>
+    </ng-container>
+    <ng-container *ngIf="isArray(item.value)">
+      <app-equation-controler-node [node]=item></app-equation-controler-node>
+    </ng-container>
+    <ng-container *ngIf="hasBrackets(item, i)">
+      <ng-katex [equation]="rBracket"></ng-katex>
+    </ng-container>
+
+    <ng-container *ngIf="!isArray(item.value)">
+      <ng-katex [equation]="item.value"></ng-katex>
+    </ng-container>
+  </div>
+</div>
+
+<!--
+  [ngClass]="{'fraction': node.value[0].sign === '/', 'example-box': node.value[0].sign !== '/'}"
+  <div class="example-box" *ngFor="let item of node" cdkDrag [cdkDragDisabled]="isDragable(item)">
+    <div *ngIf="isArray(item)">
+      
+      <app-equation-node [node]=item></app-equation-node>
+      
+    </div>
+    <div *ngIf="!isArray(item)">
+      <ng-katex [equation]="itemToTeX(item)" ></ng-katex>
+      
+      <div *cdkDragPreview class="cdk-drag-preview">
+        <ng-katex [equation]="item" ></ng-katex>
+      </div>-->

@@ -1,0 +1,9 @@
+<textarea [value]="inputEquation" class="form-control" (input)="checkIfCorrect($event.target.value);"></textarea>
+<br>
+<button class="btn btn-primary" (click)="checkIfCorrect()">Použít</button>
+<br>
+<div>{{inputEquation}}</div>
+<div>{{correct}}</div>
+<div>
+  <ng-katex [equation]="inputEquation"></ng-katex>
+</div>
