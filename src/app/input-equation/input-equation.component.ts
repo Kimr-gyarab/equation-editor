@@ -1,3 +1,4 @@
+import { Equation } from './../equation/equation';
 import { Component, OnInit } from '@angular/core';
 import { MathNode } from '../equation/math-node';
 
@@ -7,7 +8,7 @@ import { MathNode } from '../equation/math-node';
   styleUrls: ['./input-equation.component.scss']
 })
 export class InputEquationComponent implements OnInit {
-
+  equation: Equation;
   
   inputEquation: string;
   correct: boolean;
@@ -21,6 +22,23 @@ export class InputEquationComponent implements OnInit {
   }
 
   ngOnInit() {
+  }
+
+  parseEquation(inputString: string){
+    if (!inputString.includes('=')) {
+      this.correct = false;
+      return;
+    }
+
+    let l = inputString.split('=')[0];
+    let r = inputString.split('=')[1];
+
+    if (l.length === 0 || r.length === 0) {
+      this.correct = false;
+      return;
+    }
+
+    this.equation = new Equation(l, r);
   }
 
   checkIfCorrect(inputEquation: string){

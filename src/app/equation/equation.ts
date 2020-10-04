@@ -5,9 +5,9 @@ export class Equation {
     leftSide: MathNode;
     rightSide: MathNode;
 
-    constructor(leftSide: MathNode, rightSide: MathNode) {
-        this.leftSide = leftSide;
-        this.rightSide = rightSide;
+    constructor(leftSide: string, rightSide: string) {
+        this.leftSide = new MathNode('', leftSide, true);
+        this.rightSide = new MathNode('', rightSide, true);
     }
 
     swapSides(): void {
