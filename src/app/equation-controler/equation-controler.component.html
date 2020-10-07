@@ -34,36 +34,19 @@
   </div>-->
   <div cdkDropListGroup class="equation-container">
     <div class="equation-side">
-      <app-equation-controler-node [node]=l></app-equation-controler-node>
+      <app-equation-controler-node [node]=equation.leftSide></app-equation-controler-node>
     </div>
 
 
     <div class="equation-sign noselect">
-      <ng-katex [equation]="equationSign"></ng-katex>
+      <ng-katex [equation]=equationSign></ng-katex>
     </div>
 
     <div class="equation-side">
-      <app-equation-controler-node [node]=r></app-equation-controler-node>
+      <app-equation-controler-node [node]=equation.rightSide></app-equation-controler-node>
     </div>
   </div>
 
-  <div>
-    Části vybrané k nahrazení: <br>
-    <!--<ng-container *ngIf="selected.toString().length === 0">
-      nic nebylo vybráno
-    </ng-container>
-    <ng-container *ngIf="selected.toString().length !== 0">
-      <ng-katex [equation]="selected.toString()"></ng-katex>
-    </ng-container>-->
-    
-
-    <!--<ul>
-      <li *ngFor="let item of selection"><ng-katex [equation]="item.toString()" ></ng-katex></li>
-    </ul>-->
-  </div>
-  <!--<div>
-    {{calcSelection()}}
-  </div>-->
   <button class="btn btn-primary" (click)='clearSelection()'>Zrušit výběr</button>
 
   <!--<button class="btn btn-primary" (click)='print()'>Print</button>-->
@@ -76,6 +59,8 @@
   <button class="btn btn-primary" (click)="multiplyEquation()">Vynásobit rovnici</button>
   <br>
   <button class="btn btn-primary" (click)="divideEquation()">Vydělit rovnici</button>
+  <br>
+  <button class="btn btn-primary" (click)="swapSides()">Prohodit strany</button>
   <br>
   <button class="btn btn-primary" (click)="print()">Vypsat</button>
   <table>

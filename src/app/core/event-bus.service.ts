@@ -29,7 +29,9 @@ export class EmitEvent {
 
 }
 
+
 export enum Events {
   EquationChanged,
-  NodeSelected
+  NodeSelected,
+  NewEquationSubmited
 }

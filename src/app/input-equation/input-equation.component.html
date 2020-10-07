@@ -1,9 +1,9 @@
-<textarea [value]="inputEquation" class="form-control" (input)="checkIfCorrect($event.target.value);"></textarea>
+<input type="text" class="form-control" aria-label="Large" aria-describedby="inputGroup-sizing-sm" (input)="parseEquation($event.target.value);">
 <br>
-<button class="btn btn-primary">Použít</button>
+<button class="btn btn-primary" (click)=submit()>Použít</button>
 <br>
 <div>{{inputEquation}}</div>
-<div>{{correct}}</div>
+<div>{{isCorrect}}</div>
 <div>
-  <ng-katex [equation]="inputEquation"></ng-katex>
+  <ng-katex [equation]="equationAsString"></ng-katex>
 </div>

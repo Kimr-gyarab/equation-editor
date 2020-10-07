@@ -17,7 +17,6 @@ export class EquationControlerNodeComponent{
   lastTestedSelected: MathNode = new MathNode();
 
   constructor(private eventbus: EventBusService) {
-    this.changedNode = new EventEmitter();
   }
 
   drop(event: CdkDragDrop<any>) {

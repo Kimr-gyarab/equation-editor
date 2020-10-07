@@ -1,74 +1,52 @@
+import { Subscription } from 'rxjs';
 import { Equation } from './../equation/equation';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output } from '@angular/core';
 import { MathNode } from '../equation/math-node';
+import { EmitEvent, EventBusService, Events } from '../core/event-bus.service';
 
 @Component({
   selector: 'app-input-equation',
   templateUrl: './input-equation.component.html',
   styleUrls: ['./input-equation.component.scss']
 })
-export class InputEquationComponent implements OnInit {
+
+
+export class InputEquationComponent {
   equation: Equation;
-  
+
+  equationAsString: string;
   inputEquation: string;
-  correct: boolean;
-  asMathNode: MathNode;
-  asMathNodeS: string;
-  l;
-  r;
-  constructor() {
+  isCorrect: boolean;
+
+  constructor(private eventbus: EventBusService) {
     this.inputEquation = '';
-    this.correct = false;
+    this.isCorrect = false;
   }
-
-  ngOnInit() {
-  }
-
-  parseEquation(inputString: string){
+  
+  parseEquation(inputString: string) {
+    this.equationAsString = inputString;
     if (!inputString.includes('=')) {
-      this.correct = false;
+      this.isCorrect = false;
       return;
     }
 
-    let l = inputString.split('=')[0];
-    let r = inputString.split('=')[1];
+    let left = inputString.split('=')[0];
+    let right = inputString.split('=')[1];
 
-    if (l.length === 0 || r.length === 0) {
-      this.correct = false;
+    if (left.length === 0 || right.length === 0) {
+      this.isCorrect = false;
       return;
     }
 
-    this.equation = new Equation(l, r);
+    this.equation = new Equation(left, right);
+    this.isCorrect = this.equation.isValid();
+    this.equationAsString = this.equation.toString();
   }
 
-  checkIfCorrect(inputEquation: string){
-    this.l = inputEquation.split('=')[0];
-    this.r = inputEquation.split('=')[1];
-
-    this.inputEquation = inputEquation;
-    this.asMathNode = new MathNode('', inputEquation.split('=')[0], true);
-    console.log(this.asMathNode);
-    console.log(this.asMathNode.isValid());
-    
-    
-    this.correct = this.asMathNode.isValid();
-    this.asMathNodeS = this.asMathNode.toString();
-  }
-
-  useEquation(value){
-    console.log(value);
-  }
-
-  generateEquation(difficulty: number){
-    let steps = 10;
-    let stepValues = [10];
-    let l = '';
-    let r = 'x';
-    for (let i = 0; i < steps; i++) {
-    }
-    for (let i = 0; i < stepValues.length; i++) {
-      const element = stepValues[i];
-      
-    }
+  submit(){
+    console.log(this.equation.leftSide);
+    console.log(this.equation.rightSide);
+    this.equation.correctStructure();
+    this.eventbus.emit(new EmitEvent(Events.NewEquationSubmited, this.equation));
   }
 }

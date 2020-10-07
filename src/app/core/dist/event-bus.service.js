@@ -41,4 +41,5 @@ var Events;
 (function (Events) {
     Events[Events["EquationChanged"] = 0] = "EquationChanged";
     Events[Events["NodeSelected"] = 1] = "NodeSelected";
+    Events[Events["NewEquationSubmited"] = 2] = "NewEquationSubmited";
 })(Events = exports.Events || (exports.Events = {}));

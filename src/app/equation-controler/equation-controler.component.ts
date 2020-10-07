@@ -1,3 +1,4 @@
+import { Equation } from './../equation/equation';
 import { Component, OnInit } from '@angular/core';
 import * as nerdamer from 'nerdamer';
 import { Subscription } from 'rxjs';
@@ -10,50 +11,27 @@ import { MathNode } from '../equation/math-node';
   styleUrls: ['./equation-controler.component.css']
 })
 export class EquationControlerComponent implements OnInit {
+  equation: Equation;
+
   eventbusSub: Subscription;
-  equationSign: string = '=';
-  edits: Array<any> = [];
   editChanges: Array<string> = [];
-  l: MathNode;
-  r: MathNode;
-  //selected: MathNode = new MathNode();
+
   lastTestedSelected: MathNode = new MathNode();
   selection: Array<MathNode> = [];
-  /**
-   * Stores user input from textArea.
-   */
   userInputExpression: string;
-  row = 0;
-  equations = ['10x-1', '(15-6x)/3',
-    '9x+8', '11x-10',
-    '-1-5(2x-8(2x-3))', '+19',
-    '2(x-1)-3(x-2)+4(x-3)', '2(x+8)',
-    '2(3+4x)-2', '3-5(1-x)'];
-
-  equationsAsMathNodes = [new MathNode('', this.equations[0], true),
-  new MathNode('', this.equations[1], true),
-  new MathNode('', this.equations[2], true),
-  new MathNode('', this.equations[3], true),
-  new MathNode('', this.equations[4], true),
-  new MathNode('', this.equations[5], true),
-  new MathNode('', this.equations[6], true),
-  new MathNode('', this.equations[7], true),
-  new MathNode('', this.equations[8], true),
-  new MathNode('', this.equations[9], true)]
-
-
+  equationSign = '=';
 
   constructor(private eventbus: EventBusService) {
-
-    this.l = this.equationsAsMathNodes[this.row * 2];
-    this.r = this.equationsAsMathNodes[this.row * 2 + 1];
+    this.equation = new Equation('1+(1+4*(2+9))', 'x2+(1+1+2)/2');
+    console.log(this.equation.toString());
+    
     //todo cookies
     this.userInputExpression = '';
   }
 
   ngOnInit() {
     this.eventbusSub = this.eventbus.on(Events.EquationChanged, eventData => {
-      this.correctStructure();
+      this.equation.correctStructure();
       this.clearSelection();
       //this.addEdit(eventData);
     });
@@ -63,9 +41,7 @@ export class EquationControlerComponent implements OnInit {
         this.lastTestedSelected = newSelected;
         return;
       }
-      if (this.selection.length !== 0 &&
-        (this.l.areChildrenSibilings(newSelected, this.selection[0]) ||
-          this.r.areChildrenSibilings(newSelected, this.selection[0]))) {
+      if (this.selection.length !== 0 && this.equation.areChildrenSibilings(newSelected, this.selection[0])) {
             
         if (this.selection.indexOf(newSelected) === -1) {
           
@@ -99,15 +75,15 @@ export class EquationControlerComponent implements OnInit {
       this.lastTestedSelected = newSelected;
     });
 
+    this.eventbusSub = this.eventbus.on(Events.NewEquationSubmited, (eqation: Equation) => this.equation = eqation);
   }
 
   ngOnDestroy() {
-    // AutoUnsubscribe decorator above makes these calls unnecessary
     this.eventbusSub.unsubscribe();
   }
 
   /**
-   * Replaces selected part/parts by user input from replaceForm
+   * 
    */
   editEquation() {
     let selectedExpression = new MathNode('', this.selection, true);
@@ -116,22 +92,15 @@ export class EquationControlerComponent implements OnInit {
     if (this.areExpressionsEqual(selectedExpression, replacement)) {
       if (!Array.isArray(replacement.value)) {
         this.selection[0].sign = replacement.sign;
-      } else {
-        this.selection[0].root = true;
+        this.equation.deselectNodes();
       }
       this.selection[0].value = replacement.value;
-
-
 
       for (let i = 1; i < this.selection.length; i++) {
         this.selection[i].value = '0';
       }
     }
-
-    this.l.correctStructure();
-    this.r.correctStructure();
-    this.l.correctStructure();
-    this.r.correctStructure();
+    this.equation.correctStructure();
 
     this.clearSelection();
   }
@@ -141,12 +110,8 @@ export class EquationControlerComponent implements OnInit {
    * Expands both sides of equation by expression from expandForm.
    * Function is triggered by submit button of expandForm.
    */
-
   multiplyEquation() {
-    let expression: MathNode = new MathNode('', this.userInputExpression);
-
-    this.l.multiply(expression);
-    this.r.multiply(expression);
+    this.equation.multiply(this.userInputExpression);
     this.clearSelection();
   }
 
@@ -154,15 +119,14 @@ export class EquationControlerComponent implements OnInit {
    * Divides both sides of equation by expression from divideForm.
    * Function is triggered by submit button of divideForm.
    */
-
   divideEquation() {
-    let expression: MathNode = new MathNode('', this.userInputExpression);
-
-    this.l.divide(expression);
-    this.r.divide(expression);
+    this.equation.divide(this.userInputExpression);
     this.clearSelection();
   }
 
+  swapSides(): void {
+    this.equation.swapSides();
+  }
 
   /**
    * Returns true if both expressions are equal.
@@ -201,11 +165,8 @@ export class EquationControlerComponent implements OnInit {
    * Clears value of selection and selected. Deselects all selected nodes.
    */
   clearSelection(): void {
-    this.selection.forEach((element: MathNode) => {
-      element.setSelected(false);
-    })
+    this.equation.deselectNodes();
     this.selection = [];
-    //this.selected = new MathNode();
   }
 
   /**
@@ -217,52 +178,11 @@ export class EquationControlerComponent implements OnInit {
     return e.toString();
   }
 
-  correctStructure(): void {
-    this.l.correctStructure();
-    this.r.correctStructure();    
-  }
-
   /**
    * For testing only
    */
   print() {
-    console.log(this.l);
-    console.log(this.r);
+    console.log(this.equation.leftSide);
+    console.log(this.equation.rightSide);
   }
-  /*
-    next() {
-      this.row++;
-      this.l = this.equationsAsMathNodes[this.row * 2];
-      this.r = this.equationsAsMathNodes[this.row * 2 + 1];
-  
-    }
-  
-    before() {
-      this.row--;
-      this.l = this.equationsAsMathNodes[this.row * 2];
-      this.r = this.equationsAsMathNodes[this.row * 2 + 1];
-    }
-  
-    reset() {
-      this.equationsAsMathNodes = [new MathNode('', this.equations[0], true),
-      new MathNode('', this.equations[1], true),
-      new MathNode('', this.equations[2], true),
-      new MathNode('', this.equations[3], true),
-      new MathNode('', this.equations[4], true),
-      new MathNode('', this.equations[5], true),
-      new MathNode('', this.equations[6], true),
-      new MathNode('', this.equations[7], true),
-      new MathNode('', this.equations[8], true),
-      new MathNode('', this.equations[9], true)];
-      this.l = this.equationsAsMathNodes[this.row * 2];
-      this.r = this.equationsAsMathNodes[this.row * 2 + 1];
-    }
-  
-    isDisabledNext() {
-      return this.row === this.equationsAsMathNodes.length / 2 - 1;
-    }
-  
-    isDisabledBefore() {
-      return this.row === 0;
-    }*/
 }
