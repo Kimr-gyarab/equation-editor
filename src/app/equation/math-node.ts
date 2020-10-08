@@ -1,5 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import * as nerdamer from 'nerdamer';
+import { variable } from '@angular/compiler/src/output/output_ast';
 
 export class MathNode {
     uuid: string;
@@ -55,13 +56,13 @@ export class MathNode {
      * Corrects this.value from string with +-/* to array of MathNodes
      */
     corectMathNode(): void {
-        
+
         let valAsString: string = this.value;
         let brackets: number = 0;
         let addition: boolean = false;
         let multiplication: boolean = false;
         let division: boolean = false;
-            
+
 
         if (valAsString.match(/[()]/g) !== null && valAsString.startsWith('(') && valAsString.endsWith(')')) {
             if (valAsString.match(/[()]/g).length === 2) {
@@ -300,7 +301,7 @@ export class MathNode {
 
                         arrVal = [new MathNode('', this.value[i].value)];
                     } else {
-                        if ((this.value[i].sign + this.value[i].value[0].sign).matches(/([+-][+-])|([/*][/*])/) !== null) {
+                        if (this.sameOperation(this.value[i].sign, this.value[i].value[0].sign)) {
                             for (let j = 0; j < arrVal.length; j++) {
                                 this.value.splice(i + j, j === 0 ? 1 : 0, arrVal[j]);
                             }
@@ -319,6 +320,16 @@ export class MathNode {
             });
         }
         return anyChanges;
+    }
+
+    sameOperation(firstSign: string, secondSign: string): boolean {
+        if ((firstSign === '-' || firstSign === '+') && (secondSign === '-' || secondSign === '+')) {
+            return true;
+        }
+        if ((firstSign === '-' || firstSign === '/') && (secondSign === '*' || secondSign === '/')) {
+            return true;
+        }
+        return false
     }
 
     /**
@@ -362,13 +373,13 @@ export class MathNode {
             //Checks whether it is possible to cancel out expression and MathNode from denominatior
 
             for (let i = 0; i < mathNode.value[1].value.length; i++) {
-                if (this.areExpEqual(mathNode.value[1].value[i], expression)) {
+                if (MathNode.areExpEqual(mathNode.value[1].value[i], expression)) {
                     mathNode.value[1].value.splice(i, 1);
                     return;
                 }
             }
             for (let i = 0; i < mathNode.value[1].value.length; i++) {
-                if (this.areAbsExpEqual(mathNode.value[1].value[i], expression)) {
+                if (MathNode.areAbsExpEqual(mathNode.value[1].value[i], expression)) {
                     mathNode.value[1].value.splice(i, 1);
                     mathNode.changeSign();
                     return;
@@ -377,11 +388,11 @@ export class MathNode {
         }
 
 
-        if (this.areExpEqual(mathNode.value[1], expression)) {
+        if (MathNode.areExpEqual(mathNode.value[1], expression)) {
             //Expression equils donominator and cancel each other out
 
             mathNode.value = mathNode.value[0].value;
-        } else if (this.areAbsExpEqual(mathNode.value[1], expression)) {
+        } else if (MathNode.areAbsExpEqual(mathNode.value[1], expression)) {
             //Expression equils minus donominator and cancel each other out
 
             mathNode.value = mathNode.value[0].value;
@@ -450,11 +461,11 @@ export class MathNode {
                     element.value = [new MathNode('/', element.value), new MathNode('/', expression.toString())];
                 }
             } else if (element.value !== '0') {
-                if (this.areExpEqual(element, expression)) {
+                if (MathNode.areExpEqual(element, expression)) {
                     element.sign = '+';
                     element.value = '1';
 
-                } else if (this.areAbsExpEqual(element, expression)) {
+                } else if (MathNode.areAbsExpEqual(element, expression)) {
                     element.changeSign();
                     element.value = '1';
                 } else {
@@ -480,12 +491,12 @@ export class MathNode {
     divideMultiplication(mathNode: MathNode, expression: MathNode) {
         for (let i = 0; i < mathNode.value.length; i++) {
 
-            if (this.areExpEqual(mathNode.value[i], expression)) {
+            if (MathNode.areExpEqual(mathNode.value[i], expression)) {
                 mathNode.value.splice(i, 1);
                 return;
             }
 
-            if (this.areAbsExpEqual(mathNode.value[i], expression)) {
+            if (MathNode.areAbsExpEqual(mathNode.value[i], expression)) {
                 mathNode.changeSign();
                 mathNode.value.splice(i, 1);
                 return;
@@ -508,13 +519,13 @@ export class MathNode {
      * @param expression divisor
      */
     divideDivision(mathNode: MathNode, expression: MathNode) {
-        if (this.areExpEqual(mathNode.value[0], expression)) {
+        if (MathNode.areExpEqual(mathNode.value[0], expression)) {
             mathNode.value[0].value = '1';
         } else {
             if (Array.isArray(mathNode.value[0].value)) {
                 if (mathNode.value[0].value[0].sign === '*') {
                     for (let i = 0; i < mathNode.value[0].value.length; i++) {
-                        if (this.areExpEqual(mathNode.value[0].value[i], expression)) {
+                        if (MathNode.areExpEqual(mathNode.value[0].value[i], expression)) {
                             mathNode.value[0].value.splice(i, 1);
                             return;
 
@@ -642,23 +653,25 @@ export class MathNode {
     }
 
     /**
-     * Finds and returns variable used in MathNode.
+     * Finds and returns string of all variables used in MathNode.
      */
-    findVariable(): string {
+    findVariables(): string {
         //add err tooManyVars
+        let variable = '';
         if (typeof (this.value) === 'string' && this.value.match(/[a-z]/ig) !== null) {
-            return this.value.match(/[a-z]/ig)[0];
-        }
-
-        if (Array.isArray(this.value)) {
+            variable = this.value.match(/[a-z]/ig).join('');
+        } else if (Array.isArray(this.value)) {
             //recursively calls this method
+
             for (let i = 0; i < this.value.length; i++) {
-                let variable = this.value[i].findVariable();
-                if (variable !== '') {
-                    return variable;
-                }
+                variable += this.value[i].findVariables();
             }
         }
+        return variable.split('')
+            .filter(function (item, pos, self) {
+                return self.indexOf(item) == pos;
+            })
+            .join('');
     }
 
     /**
@@ -666,7 +679,6 @@ export class MathNode {
      */
     isValid(): boolean {
         if (typeof (this.value) === 'string' && (this.value === '' || this.value.match(/([^a-zA-Z0-9])/))) {
-            console.log('Empty value; UUID: ' + this.uuid);
             return false;
         }
         if (Array.isArray(this.value)) {
@@ -674,7 +686,6 @@ export class MathNode {
                 if (!this.value[i].isValid()) {
                     return false;
                 }
-
             }
         }
 
@@ -716,7 +727,7 @@ export class MathNode {
      * @param exp1 first expression
      * @param exp2 second expression
      */
-    areExpEqual(exp1: MathNode, exp2: MathNode): boolean {
+    static areExpEqual(exp1: MathNode, exp2: MathNode): boolean {
         let exp1AsString = exp1.toString();
         let exp2AsString = exp2.toString();
         let e1 = nerdamer(exp1AsString.toString(), undefined, "expand");
@@ -731,7 +742,7 @@ export class MathNode {
      * @param exp1 first expression
      * @param exp2 second expression
      */
-    areAbsExpEqual(exp1: MathNode, exp2: MathNode): boolean {
+    static areAbsExpEqual(exp1: MathNode, exp2: MathNode): boolean {
         let exp1AsString = exp1.toString();
         let exp2AsString = exp2.toString();
         let e1 = nerdamer(exp1AsString.toString(), undefined, "expand");

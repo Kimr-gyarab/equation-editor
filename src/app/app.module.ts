@@ -16,7 +16,7 @@ import { InputEquationComponent } from './input-equation/input-equation.componen
     AppComponent,
     EquationControlerComponent,
     EquationControlerNodeComponent,
-      InputEquationComponent
+    InputEquationComponent
    ],
   imports: [
     BrowserModule,

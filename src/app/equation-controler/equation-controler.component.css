@@ -42,3 +42,8 @@
     margin-right: 5px;
     margin-bottom: 5px;
   }
+
+  ng-katex {
+    font-size: 2.5rem;
+    padding: 0 0;
+  }

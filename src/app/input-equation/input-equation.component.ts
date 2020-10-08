@@ -1,7 +1,5 @@
-import { Subscription } from 'rxjs';
 import { Equation } from './../equation/equation';
-import { Component, OnInit, Output } from '@angular/core';
-import { MathNode } from '../equation/math-node';
+import { Component } from '@angular/core';
 import { EmitEvent, EventBusService, Events } from '../core/event-bus.service';
 
 @Component({
@@ -9,7 +7,6 @@ import { EmitEvent, EventBusService, Events } from '../core/event-bus.service';
   templateUrl: './input-equation.component.html',
   styleUrls: ['./input-equation.component.scss']
 })
-
 
 export class InputEquationComponent {
   equation: Equation;

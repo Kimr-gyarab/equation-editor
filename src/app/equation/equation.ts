@@ -9,15 +9,18 @@ export class Equation {
     constructor(leftSide: string, rightSide: string) {
         this.leftSide = new MathNode('', leftSide, true);
         this.rightSide = new MathNode('', rightSide, true);
-        this.variable = this.leftSide.findVariable() + this.rightSide.findVariable();
-        console.log(this.variable);
+        this.variable = (this.leftSide.findVariables() + this.rightSide.findVariables()).split('')
+            .filter(function (item, pos, self) {
+                return self.indexOf(item) == pos;
+            })
+            .join('');
     }
 
     swapSides(): void {
         let temp = this.leftSide
         this.leftSide = this.rightSide;
         this.rightSide = temp;
-        
+
     }
 
     multiply(expressionAsString: string) {
@@ -52,23 +55,12 @@ export class Equation {
     }
 
     correctStructure(): void {
-        let anyChanges = false;
-        anyChanges = this.leftSide.correctStructure();
-        console.log('a');
+        while (this.leftSide.correctStructure()) { };
+        while (this.rightSide.correctStructure()) { };
+    }
 
-        while (anyChanges) {
-            console.log('a');
-            anyChanges = this.leftSide.correctStructure();
-        };
-
-        anyChanges = false;
-        this.rightSide.correctStructure();
-        console.log('b');
-
-        while (anyChanges) {
-            console.log('b');
-            anyChanges = this.rightSide.correctStructure();
-        };
+    getCopy(): Equation {
+        return new Equation(this.leftSide.toString(), this.rightSide.toString());
     }
 
     toString(): string {

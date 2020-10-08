@@ -19,19 +19,6 @@
 
 <div class="component">
   <app-input-equation></app-input-equation>
-  <!--<div cdkDropListGroup>
-    <div class="example-container">
-      <app-equation-node [node]=arrayL></app-equation-node>
-    </div>
-    <div class="example-container">
-      <app-equation-node [node]=arrayR></app-equation-node>
-    </div>
-  </div>-->
-  <!--<div>
-    <button class="btn btn-primary" (click)="before()" [disabled]="isDisabledBefore()">Předchozí</button>
-    <button class="btn btn-primary" (click)="next()" [disabled]="isDisabledNext()">Další</button>
-    <button class="btn btn-primary" (click)="reset()">Vrátit rovnice do původní podoby</button>
-  </div>-->
   <div cdkDropListGroup class="equation-container">
     <div class="equation-side">
       <app-equation-controler-node [node]=equation.leftSide></app-equation-controler-node>
@@ -52,7 +39,9 @@
   <!--<button class="btn btn-primary" (click)='print()'>Print</button>-->
 
 
-  <textarea [value]="userInputExpression" class="form-control" (input)="userInputExpression = $event.target.value;"></textarea>
+  <textarea [value]="userInputExpression" class="form-control" (input)="actualizeUserInput($event.target.value);"></textarea>
+  <br>
+  <div>{{errMessage}}</div>
   <br>
   <button class="btn btn-primary" (click)="editEquation()">Nahradit</button>
   <br>
@@ -63,19 +52,17 @@
   <button class="btn btn-primary" (click)="swapSides()">Prohodit strany</button>
   <br>
   <button class="btn btn-primary" (click)="print()">Vypsat</button>
+  <div>{{equationSign.split('=')[1]}}</div>
   <table>
-    <tr *ngFor='let line of edits; let i = index'>
+    <tr *ngFor='let edit of edits; let i = index'>
       <td style="text-align: right;">
-        <ng-katex [equation]="line[0]"></ng-katex>
+        <ng-katex [equation]="edit.split('=')[0]"></ng-katex>
       </td>
       <td style="text-align: center;">
-        <ng-katex [equation]="line[1]"></ng-katex>
+        <ng-katex [equation]=equationSign></ng-katex>
       </td>
-      <td style="text-align: left;">
-        <ng-katex [equation]="line[2]"></ng-katex>
-      </td>
-      <td style="padding-left: 50px;">
-        <ng-katex [equation]="editChanges[i]"></ng-katex>
+      <td style="text-align: left; size: 300;">
+        <ng-katex [equation]="edit.split('=')[1]"></ng-katex>
       </td>
     </tr>
   </table>

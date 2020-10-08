@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { EmitEvent, EventBusService, Events } from '../core/event-bus.service';
 import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { MathNode } from '../equation/math-node';
+import * as nerdamer from 'nerdamer';
 
 @Component({
   selector: 'app-equation-controler-node',
@@ -88,5 +89,9 @@ export class EquationControlerNodeComponent{
     return classes;
     //{'example-box': node.value[0].sign !== '/', 'fraction-top': (node.value[0].sign === '/' && i%2==0),
     //'fraction-bottom': (node.value[0].sign === '/' && i % 2 == 1), 'selected': item.selected}
+  }
+
+  getAsLaTeX(expression: string){
+    return nerdamer.convertToLaTeX(expression);
   }
 }

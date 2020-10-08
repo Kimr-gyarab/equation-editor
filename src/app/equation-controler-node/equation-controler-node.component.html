@@ -4,7 +4,7 @@
     (click)='selectNode(item)' [cdkDragDisabled]="isDisabled(item)">
 
     <ng-container *ngIf="hasSign(item, i)">
-      <ng-katex [equation]="item.sign"></ng-katex>
+      <ng-katex [equation]="getAsLaTeX(item.sign)"></ng-katex>
     </ng-container>
 
 
