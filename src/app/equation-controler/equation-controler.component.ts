@@ -1,10 +1,8 @@
 import { Equation } from './../equation/equation';
 import { Component, OnInit } from '@angular/core';
-import * as nerdamer from 'nerdamer';
 import { Subscription } from 'rxjs';
 import { EventBusService, Events } from '../core/event-bus.service';
 import { MathNode } from '../equation/math-node';
-import { CdkDragDrop } from '@angular/cdk/drag-drop';
 
 @Component({
     selector: 'app-equation-controler',
@@ -26,7 +24,7 @@ export class EquationControlerComponent implements OnInit {
     equationSign = '=';
 
     constructor(private eventbus: EventBusService) {
-        this.equation = new Equation('1+(1+4*(2+9))', 'x2+(((1+1+2)/2)/2+1)');
+        this.equation = new Equation('1+(1+4*(2+9))', 'x2+((1+1+2)/2-4)/2+1');
         this.edits = [];
         this.editCount = 0;
         //todo cookies
@@ -102,7 +100,7 @@ export class EquationControlerComponent implements OnInit {
         let expression: MathNode = new MathNode('', this.userInputExpression);
 
         let expressionVariables = expression.findVariables();
-        if (expressionVariables.length !== 0 && expressionVariables !== this.equation.variable) {
+        if (expressionVariables.length !== 0 && expressionVariables !== this.equation.getVariable()) {
             if (expressionVariables.length === 1) {
                 this.errMessage += `Výraz nesmí obsahovat neznámou $${expressionVariables}$.`;
             } else {
@@ -143,44 +141,24 @@ export class EquationControlerComponent implements OnInit {
                 this.errMessage += 'Rovnici nelze dělit výrazem obsahujícím neznámou.\n'
             }
         }
-
-
     }
+
     /**
      * Replaces selected MathNodes by value of userInputExpression if they are equal.
      */
     editEquation() {
-        let selectedExpression = new MathNode('', this.selection, true);
-        let expression: MathNode = new MathNode('', this.userInputExpression);
         this.checkInput(0);
-        /*this.errMessage = '';
-        if (!expression.isValid()) {
-            this.errMessage += 'Výraz obsahuje chybu.\n'
-        }
-        if (!MathNode.areExpEqual(selectedExpression, expression)) {
-            this.errMessage += 'Hodnota vybraného výrazu není sejná jako hodnota napsaného výrazu.\n'
-        }
-        console.log('a');
-
-        let expressionVariables = expression.findVariables();
-        console.log(expressionVariables);
-        console.log('b');
-
-        if (expressionVariables.length !== 0 && expressionVariables !== this.equation.variable) {
-            if (expressionVariables.length === 1) {
-                this.errMessage += `Rovnice neobsahuje neznámou $${expressionVariables}$.`;
-            } else {
-                this.errMessage += `Rovnice neobsahuje neznámé`;
-                for (let i = 0; i < expressionVariables.length; i++) {
-                    this.errMessage += ` $${expressionVariables[i]}$` + (i !== expressionVariables.length - 1 ? ', ' : '.\n');
-                }
-            }
-        }*/
-
 
         if (this.errMessage.length === 0) {
+            let expression: MathNode = new MathNode('', this.userInputExpression);
             if (!Array.isArray(expression.value)) {
-                this.selection[0].sign = expression.sign;
+                if (this.selection[0].sign === '/' && expression.sign === '-') {
+                    expression = new MathNode('+', [expression]);
+                }
+                if (this.selection[0].sign !== '/') {
+                    this.selection[0].sign = expression.sign;
+                }
+
                 this.equation.deselectNodes();
             }
             this.selection[0].value = expression.value;
@@ -197,20 +175,7 @@ export class EquationControlerComponent implements OnInit {
      * Expands both sides of equation by value of userInputExpression if possible.
      */
     multiplyEquation() {
-        let expression: MathNode = new MathNode('', this.userInputExpression);
         this.checkInput(1);
-        /*this.errMessage = '';
-
-        if (!expression.isValid()) {
-            this.errMessage += 'Výraz obsahuje chybu.\n'
-        }
-        if (MathNode.areExpEqual(new MathNode('', 0), expression)) {
-            this.errMessage += 'Rovnici nelze násobit výrazem rovným nule.\n'
-        }
-        if (expression.findVariables().length !== 0) {
-            this.errMessage += 'Rovnici nelze násobit výrazem obsahujícím neznámou.\n'
-        }*/
-
 
         if (this.errMessage.length === 0) {
             this.equation.multiply(this.userInputExpression);
@@ -222,18 +187,7 @@ export class EquationControlerComponent implements OnInit {
      * Divides both sides of equation by value of userInputExpression if possible.
      */
     divideEquation() {
-        let expression: MathNode = new MathNode('', this.userInputExpression);
         this.checkInput(2);
-        /*this.errMessage = '';
-        if (!expression.isValid()) {
-            this.errMessage += 'Výraz obsahuje chybu.\n'
-        }
-        if (MathNode.areExpEqual(new MathNode('', 0), expression)) {
-            this.errMessage += 'Rovnici nelze dělit výrazem rovným nule.\n'
-        }
-        if (expression.findVariables().length !== 0) {
-            this.errMessage += 'Rovnici nelze dělit výrazem obsahujícím neznámou.\n'
-        }*/
 
         if (this.errMessage.length === 0) {
             this.equation.divide(this.userInputExpression);
@@ -278,6 +232,20 @@ export class EquationControlerComponent implements OnInit {
     clearSelection(): void {
         this.equation.deselectNodes();
         this.selection = [];
+    }
+
+    calcFontSize() {
+        if (this.equation.toString().length === 0) {
+            return '3rem';
+        }
+        let size = 67.5 / this.equation.toString().length - 0.75;
+        if (size > 3) {
+            size = 3;
+        }
+        if (size < 1.5) {
+            size = 1.5;
+        }
+        return size + 'rem';
     }
 
     /**

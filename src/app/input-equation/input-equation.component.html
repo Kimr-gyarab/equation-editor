@@ -1,9 +1,27 @@
-<input type="text" class="form-control" aria-label="Large" aria-describedby="inputGroup-sizing-sm" (input)="parseEquation($event.target.value);">
-<br>
-<button class="btn btn-primary" (click)=submit()>Použít</button>
-<br>
-<div>{{inputEquation}}</div>
-<div>{{isCorrect}}</div>
-<div>
-  <ng-katex [equation]="equationAsString"></ng-katex>
+<h2>Zadat rovnici:</h2>
+<div class="container-fluid">
+  <div class="row top-buffer">
+    <input type="text" class="form-control col" (input)="parseEquation($event.target.value);">
+    <button class="btn btn-primary col-md-auto ml-2" (click)=submit()>Použít</button>
+  </div>
+</div>
+
+<h3>Náhled:</h3>
+<div class="container-fluid">
+  <div class="row justify-content-between">
+    <div class="col-12 col-md-7" id="preview" #container>
+      <div id="equationPreview">
+        <ng-container *ngIf="equationAsString.length === 0">
+          Náhled není k dispozici
+        </ng-container>
+        <div #preview>
+          <ng-katex [equation]="getAsLaTeX(equationAsString)" [ngStyle]="{'font-size': calcFontSize()}" >
+          </ng-katex>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-md-4" id="errors">
+      {{errMessage}}
+    </div>
+  </div>
 </div>

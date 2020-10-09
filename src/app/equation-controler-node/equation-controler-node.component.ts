@@ -11,7 +11,7 @@ import * as nerdamer from 'nerdamer';
 })
 export class EquationControlerNodeComponent{
   @Input() node;
-  @Output() changedNode: EventEmitter<CdkDragDrop<string[]>>;
+  @Input() fontSize;
 
   lBracket = '(';
   rBracket = ')';
@@ -93,5 +93,9 @@ export class EquationControlerNodeComponent{
 
   getAsLaTeX(expression: string){
     return nerdamer.convertToLaTeX(expression);
+  }
+
+  getSize(){
+    return this.fontSize + 'rem';
   }
 }

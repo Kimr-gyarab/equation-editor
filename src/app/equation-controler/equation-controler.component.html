@@ -1,36 +1,18 @@
-<!--<div class="component">
-  <div cdkDropListGroup>
-    <div class="example-container">
-      <div cdkDropList cdkDropListOrientation="horizontal" [cdkDropListData]="leftSide" class="example-list"
-        (cdkDropListDropped)="drop($event)">
-        <div class="example-box" *ngFor="let item of leftSide" cdkDrag [cdkDragDisabled]="item.disabled"><ng-katex [equation]="item"></ng-katex></div>
-      </div>
-      <div class="equility-sign">=</div>
-      <div cdkDropList cdkDropListOrientation="horizontal" [cdkDropListData]="rightSide" class="example-list"
-        (cdkDropListDropped)="drop($event)">
-        <div class="example-box" *ngFor="let item of rightSide" cdkDrag><ng-katex [equation]="item"></ng-katex></div>
-      </div>
-    </div>
-  </div>
-
-  <ng-katex [equation]="equation"></ng-katex>
-</div>-->
-
-
 <div class="component">
   <app-input-equation></app-input-equation>
+  <h2>Řešit rovnici</h2>
   <div cdkDropListGroup class="equation-container">
     <div class="equation-side">
-      <app-equation-controler-node [node]=equation.leftSide></app-equation-controler-node>
-    </div>
+      <app-equation-controler-node [node]=equation.leftSide [fontSize]='calcFontSize()'></app-equation-controler-node>
+    </div> 
 
 
     <div class="equation-sign noselect">
-      <ng-katex [equation]=equationSign></ng-katex>
+      <ng-katex [equation]=equationSign style="font-size: calcFontSize();"></ng-katex>
     </div>
 
     <div class="equation-side">
-      <app-equation-controler-node [node]=equation.rightSide></app-equation-controler-node>
+      <app-equation-controler-node [node]=equation.rightSide [fontSize]='calcFontSize()'></app-equation-controler-node>
     </div>
   </div>
 
@@ -52,7 +34,7 @@
   <button class="btn btn-primary" (click)="swapSides()">Prohodit strany</button>
   <br>
   <button class="btn btn-primary" (click)="print()">Vypsat</button>
-  <div>{{equationSign.split('=')[1]}}</div>
+
   <table>
     <tr *ngFor='let edit of edits; let i = index'>
       <td style="text-align: right;">

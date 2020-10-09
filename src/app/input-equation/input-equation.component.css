@@ -1,0 +1,34 @@
+.top-buffer { margin-top:20px; }
+
+#equationInput {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+
+#equationInputSubmit {
+    display: flex;
+    flex-direction: row;
+    max-width: fit-content;
+}
+
+#preview {
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    height: 7rem;
+    line-height: 7rem;
+    justify-content: center;
+    font-size: 1.5rem;
+    display: flex;
+    white-space: nowrap;
+}
+
+#equationPreview {
+    
+}
+
+#errors {
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    height: 7rem;
+}

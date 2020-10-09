@@ -4,16 +4,10 @@ export class Equation {
     uuid: string;
     leftSide: MathNode;
     rightSide: MathNode;
-    variable: string;
 
     constructor(leftSide: string, rightSide: string) {
         this.leftSide = new MathNode('', leftSide, true);
         this.rightSide = new MathNode('', rightSide, true);
-        this.variable = (this.leftSide.findVariables() + this.rightSide.findVariables()).split('')
-            .filter(function (item, pos, self) {
-                return self.indexOf(item) == pos;
-            })
-            .join('');
     }
 
     swapSides(): void {
@@ -61,6 +55,14 @@ export class Equation {
 
     getCopy(): Equation {
         return new Equation(this.leftSide.toString(), this.rightSide.toString());
+    }
+
+    getVariable(): string {
+        return (this.leftSide.findVariables() + this.rightSide.findVariables()).split('')
+            .filter(function (item, pos, self) {
+                return self.indexOf(item) == pos;
+            })
+            .join('');
     }
 
     toString(): string {

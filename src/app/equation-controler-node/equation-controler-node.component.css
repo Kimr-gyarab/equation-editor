@@ -113,8 +113,8 @@
                                       supported by Chrome, Opera and Firefox */
   }
   
-  ng-katex {
-    font-size: 2.5rem;
+ .katex {
+    
     padding: 0 0;
   }
   

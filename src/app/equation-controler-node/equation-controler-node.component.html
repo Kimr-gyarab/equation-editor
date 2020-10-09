@@ -4,22 +4,22 @@
     (click)='selectNode(item)' [cdkDragDisabled]="isDisabled(item)">
 
     <ng-container *ngIf="hasSign(item, i)">
-      <ng-katex [equation]="getAsLaTeX(item.sign)"></ng-katex>
+      <ng-katex [equation]="getAsLaTeX(item.sign)" [ngStyle]="{'font-size': fontSize}"></ng-katex>
     </ng-container>
 
 
     <ng-container *ngIf="hasBrackets(item, i)">
-      <ng-katex [equation]="lBracket"></ng-katex>
+      <ng-katex [equation]="lBracket" [ngStyle]="{'font-size': fontSize}" ></ng-katex>
     </ng-container>
     <ng-container *ngIf="isArray(item.value)">
-      <app-equation-controler-node [node]=item></app-equation-controler-node>
+      <app-equation-controler-node [node]=item [fontSize]=fontSize></app-equation-controler-node>
     </ng-container>
     <ng-container *ngIf="hasBrackets(item, i)">
-      <ng-katex [equation]="rBracket"></ng-katex>
+      <ng-katex [equation]="rBracket" [ngStyle]="{'font-size': fontSize}"></ng-katex>
     </ng-container>
 
     <ng-container *ngIf="!isArray(item.value)">
-      <ng-katex [equation]="item.value"></ng-katex>
+      <ng-katex [equation]="item.value" [ngStyle]="{'font-size': fontSize}"></ng-katex>
     </ng-container>
   </div>
 </div>
