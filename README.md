@@ -1,4 +1,4 @@
-https://travis-ci.com/Kimr-gyarab/equation-editor.svg?branch=master
+[![Build Status](https://travis-ci.com/Kimr-gyarab/equation-editor.svg?branch=master)](https://travis-ci.com/Kimr-gyarab/equation-editor.svg?branch=master)
 # EquationEditor
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 9.1.1.
