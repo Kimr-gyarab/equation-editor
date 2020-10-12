@@ -29,6 +29,7 @@
     "@angular/router": "~9.1.1",
     "@ng-bootstrap/ng-bootstrap": "^7.0.0",
     "bootstrap": "^4.5.0",
+    "express": "^4.17.1",
     "nerdamer": "^1.1.5",
     "ng-katex": "^2.0.3",
     "rxjs": "~6.5.4",
