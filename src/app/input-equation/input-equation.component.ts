@@ -1,3 +1,4 @@
+import { MathNode } from './../equation/math-node';
 import { Equation } from './../equation/equation';
 import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { EmitEvent, EventBusService, Events } from '../core/event-bus.service';
@@ -11,7 +12,6 @@ import * as nerdamer from 'nerdamer';
 
 export class InputEquationComponent implements AfterViewInit {
     @ViewChild('container') container: ElementRef;
-    @ViewChild('preview') preview: ElementRef;
 
     equation: Equation;
     equationAsString: string;
@@ -34,6 +34,10 @@ export class InputEquationComponent implements AfterViewInit {
     parseEquation(inputString: string) {
         this.equationAsString = inputString;
         if (!inputString.includes('=')) {
+            this.checkInput(false);
+            if (this.errMessage.length === 0) {
+                this.equationAsString = (new MathNode('', this.equationAsString, true)).toString();
+            }
             return;
         }
 
@@ -41,46 +45,51 @@ export class InputEquationComponent implements AfterViewInit {
         let right = inputString.split('=')[1];
 
         if (left.length === 0 || right.length === 0) {
+            this.checkInput(false);
+            if (this.errMessage.length === 0) {
+                this.equationAsString = (new MathNode('', this.equationAsString, true)).toString();
+            }
             return;
         }
 
         this.equation = new Equation(left, right);
-        this.checkInput();
+        this.checkInput(true);
         this.equationAsString = this.equation.toString();
     }
 
-    checkInput(): void {
+    checkInput(existsEquation: boolean): void {
         this.errMessage = '';
 
         //invalid chars
-        let invalidChars = this.equationAsString.match(/[^a-z0-9+*/()=-\s]/gi);
+        let invalidChars = this.equationAsString.match(/[^a-z0-9+*/()=-\s.]/gi);
         if (invalidChars !== null) {
             if (invalidChars.length === 1) {
                 this.errMessage += `Rovnice nesmí obsahovat znak ${invalidChars[0]}. `
             } else {
                 this.errMessage += `Rovnice nesmí obsahovat znaky`;
                 for (let i = 0; i < invalidChars.length; i++) {
-                    this.errMessage += ` $${invalidChars[i]}$` + (i !== invalidChars.length - 1 ? ', ' : '. ');
+                    this.errMessage += ` ${invalidChars[i]}` + (i !== invalidChars.length - 1 ? ', ' : '. ');
                 }
             }
             return;
         }
 
+        if (existsEquation) {
+            let equationVariables = this.equation.getVariable();
+            if (equationVariables.length === 0) {
+                this.errMessage += 'Rovnice musí obsahovat jednu neznámou. ';
+            } else if (equationVariables.length > 1) {
+                this.errMessage += 'Rovnice může obsahovat maximálně jednu neznámou. ';
+            }
 
-        let equationVariables = this.equation.getVariable();
-        if (equationVariables.length === 0) {
-            this.errMessage += 'Rovnice musí obsahovat jednu neznámou. ';
-        } else if (equationVariables.length > 1) {
-            this.errMessage += 'Rovnice může obsahovat maximálně jednu neznámou. ';
-        }
-
-        if (!this.equation.isValid()) {
-            this.errMessage += 'Rovnice obsahuje chybu. '
+            if (!this.equation.isValid()) {
+                this.errMessage += 'Rovnice obsahuje chybu. '
+            }
         }
     }
 
     submit() {
-        this.checkInput();
+        this.checkInput(true);
         if (this.errMessage.length === 0) {
             this.equation.correctStructure();
             this.eventbus.emit(new EmitEvent(Events.NewEquationSubmited, this.equation));
@@ -88,31 +97,36 @@ export class InputEquationComponent implements AfterViewInit {
     }
 
     getAsLaTeX(expression: string) {
-        return nerdamer.convertToLaTeX(expression);
+        try {
+            return nerdamer.convertToLaTeX(expression);
+        } catch (error) {
+            this.errMessage = 'Náhled není k dispozici';
+        }
     }
 
     calcFontSize() {
         if (this.equationAsString.length === 0) {
             return '2rem';
         }
-        let k = 40;
-        let textLengthPx = 0;
-
-        let size = 40 / this.equationAsString.length + 0;
+        let length = this.equationAsString.length;
+        if (this.errMessage.length === 0 && this.equation !== undefined) {
+            length = this.equation.toString().length;
+        }
+        let size = 2;
+        let textLengthPx = this.equationPreviewWidth;
         let maxSize = 2.5;
-        let minSize = 1;
         if (this.equationPreviewWidth !== 0) {
-            textLengthPx = 0.0416361 * this.equationAsString.length * this.equationAsString.length + 12.3504 * this.equationAsString.length + 10.1791;
+            textLengthPx = 0 * length * length + 17 * length - 5;
             size = this.equationPreviewWidth / textLengthPx;
         }
         if (size > maxSize) {
             size = maxSize;
         }
-        console.log(this.preview.nativeElement.offsetWidth + " " + this.container.nativeElement.offsetWidth);
-        if (this.preview.nativeElement.offsetWidth > this.container.nativeElement.offsetWidth) {
-            //;
-        }
-        size -= 0.01;
+
+
+        size -= 0.05;
+        //size = 1;
+        
         return size + 'rem';
     }
 }

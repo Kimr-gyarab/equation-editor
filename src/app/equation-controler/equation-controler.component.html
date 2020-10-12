@@ -1,39 +1,53 @@
 <div class="component">
   <app-input-equation></app-input-equation>
-  <h2>Řešit rovnici</h2>
+  <h2>Řešit rovnici:</h2>
+
+
+
+
   <div cdkDropListGroup class="equation-container">
-    <div class="equation-side">
-      <app-equation-controler-node [node]=equation.leftSide [fontSize]='calcFontSize()'></app-equation-controler-node>
-    </div> 
-
-
+    <div class="equation-side" id='left'>
+      <app-equation-controler-node [node]=equation.leftSide [fontSize]='calcFontSize()'>
+      </app-equation-controler-node>
+    </div>
     <div class="equation-sign noselect">
       <ng-katex [equation]=equationSign style="font-size: calcFontSize();"></ng-katex>
     </div>
-
-    <div class="equation-side">
-      <app-equation-controler-node [node]=equation.rightSide [fontSize]='calcFontSize()'></app-equation-controler-node>
+    <div class="equation-side" id='right'>
+      <app-equation-controler-node [node]=equation.rightSide [fontSize]='calcFontSize()'>
+      </app-equation-controler-node>
     </div>
   </div>
 
+
+  <h3>Upravit:</h3>
+  <input type="text" class="form-control col" (input)="actualizeUserInput($event.target.value);">
   <button class="btn btn-primary" (click)='clearSelection()'>Zrušit výběr</button>
-
-  <!--<button class="btn btn-primary" (click)='print()'>Print</button>-->
-
-
-  <textarea [value]="userInputExpression" class="form-control" (input)="actualizeUserInput($event.target.value);"></textarea>
-  <br>
-  <div>{{errMessage}}</div>
-  <br>
   <button class="btn btn-primary" (click)="editEquation()">Nahradit</button>
-  <br>
   <button class="btn btn-primary" (click)="multiplyEquation()">Vynásobit rovnici</button>
-  <br>
   <button class="btn btn-primary" (click)="divideEquation()">Vydělit rovnici</button>
-  <br>
   <button class="btn btn-primary" (click)="swapSides()">Prohodit strany</button>
-  <br>
-  <button class="btn btn-primary" (click)="print()">Vypsat</button>
+  <!--<button class="btn btn-primary" (click)="print()">Vypsat</button>-->
+  <h3>Náhled:</h3>
+  <div class="container-fluid">
+    <div class="row justify-content-between">
+      <div class="col-12 col-md-7" id="preview" #container>
+        <div id="equationPreview">
+          <!--<ng-container *ngIf="equationAsString.length === 0">
+            Náhled není k dispozici
+          </ng-container>
+          <div #preview>
+            <ng-katex [equation]="getAsLaTeX(equationAsString)" [ngStyle]="{'font-size': calcFontSize()}">
+            </ng-katex>
+          </div>-->
+        </div>
+      </div>
+      <div class="col-12 col-md-4" id="errors">
+        {{errMessage}}
+      </div>
+    </div>
+  </div>
+
 
   <table>
     <tr *ngFor='let edit of edits; let i = index'>

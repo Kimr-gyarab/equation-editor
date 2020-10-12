@@ -1,6 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import * as nerdamer from 'nerdamer';
-import { variable } from '@angular/compiler/src/output/output_ast';
+import * as nerdamer from 'nerdamer/nerdamer.core.js';
 
 export class MathNode {
     uuid: string;
@@ -34,6 +33,7 @@ export class MathNode {
                 this.sign = '+';
             }
         }
+
     }
 
     /**
@@ -195,62 +195,19 @@ export class MathNode {
             return string.substr(1);
         }
         return string;
-    }
-    /*
-    find(searchedUUID: string, remove: boolean = false, replacement?: MathNode) {
-        for (let i = 0; i < this.value.length; i++) {
-            if (searchedUUID === this.value[i].uuid) {
-
-                if (replacement !== undefined) {
-                    if (replacement.value[0].sign !== '*') {
-
-                        this.value[i].sign = replacement.sign;
-                        this.value.splice(i, 1);
-                        if (typeof (replacement.value) === 'object') {
-                            for (let j = 0; j < replacement.value.length; j++) {
-                                this.value.splice(i + j, 0, replacement.value[j]);
-                            }
-                        } else {
-                            this.value.splice(i, 0, replacement);
-                        }
-                    } else {
-                        replacement.sign = '*';
-                        this.value.splice(i, 1, replacement);
-                    }
-                } else {
-                    this.value.splice(i, remove ? 1 : 0);
-                }
-
-
-                return true;
-            }
-        }
-        if (!Array.isArray(this.value)) {
-            this.value.forEach(element => {
-                if (element.find(searchedUUID, remove, replacement)) {
-                    return true;
-                }
-            });
-        }
-
-        return false;
-    }*/
-    /*
-        replace(searchedMathNode: MathNode, replacement: MathNode) {
-            searchedMathNode.value = replacement.value;
-        }*/
+    }881632
 
     /**
      * Corrects structure of MathNodes – removes: 0 from addition, 1 form multiplication, unnecessary nesting; corrects replaced nodes and value of root.
      * Returns whether any changes were made.
      */
-    correctStructure(): boolean {
+    correctStructure(): boolean {        
         let anyChanges = false;
         if (this.root) {
             if (this.value.length === 0) {
                 //adds 0 if there is no other node
                 this.value.push(new MathNode('+', '0', false));
-                return;
+                return false;
             }/* else if (this.value[0].sign === '*' || this.value[0].sign === '/') {
                 //removes unnecessary nesting
                 
@@ -262,6 +219,28 @@ export class MathNode {
             }
         }
 
+        //creates fraction from decimal
+        if (typeof (this.value) === 'string' && this.value.match(/[^0-9.]/) === null) {
+            if(this.value.indexOf('.') !== -1){
+                let frac = nerdamer.convertFromLaTeX(nerdamer.convertToLaTeX(this.value).toString()).toString();
+                this.value = [new MathNode('', frac)];
+                anyChanges = true;
+            }else{
+                if (this.value.toString() !== parseInt(this.value).toString()){
+                    anyChanges = true;
+                }
+                this.value = '' + parseInt(this.value);
+            }
+        }
+
+        if (Array.isArray(this.value)) {
+            if (this.value.length > 2 && this.value[0].sign === '/') {
+                let numerator = new MathNode('/', this.value.slice(0, this.value.length - 1));
+                let denominator = this.value[this.value.length - 1];
+                this.value = [numerator, denominator];
+                anyChanges = true;
+            }
+        }
 
         if (Array.isArray(this.value)) {
             if (this.value.length === 1 && this.value[0].sign !== '-' && !this.root) {
@@ -276,10 +255,10 @@ export class MathNode {
             let newValue = [];
             for (let i = 0; i < this.value.length; i++) {
                 if ((this.value[i].value !== '1' && this.value[0].sign === '*') ||
-                    this.value[i].value !== '0') {
+                    this.value[i].value !== '0' || this.root) {
                     newValue.push(this.value[i]);
                 } else {
-                    anyChanges = true
+                    anyChanges = true;
                 }
             }
 
@@ -312,13 +291,11 @@ export class MathNode {
                 }
             }
         }
+        //recursively calls this function
+        this.getValueAsArray().forEach((element: MathNode) => {
+            anyChanges = element.correctStructure() ? true : anyChanges;
+        });
 
-        if (Array.isArray(this.value)) {
-            //recursively calls this function
-            this.value.forEach((element: MathNode) => {
-                anyChanges = element.correctStructure() ? true : anyChanges;
-            });
-        }
         return anyChanges;
     }
 
@@ -678,7 +655,7 @@ export class MathNode {
      * Checks whether the MathNode is mathematicly valid.
      */
     isValid(): boolean {
-        if (typeof (this.value) === 'string' && (this.value === '' || this.value.match(/([^a-zA-Z0-9])/))) {
+        if (typeof (this.value) === 'string' && (this.value === '' || this.value.match(/([^a-zA-Z0-9.])/))) {
             return false;
         }
         if (Array.isArray(this.value)) {

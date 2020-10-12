@@ -84,7 +84,7 @@ export class EquationControlerComponent implements OnInit {
         this.errMessage = '';
 
         //invalid chars
-        let invalidChars = this.userInputExpression.match(/[^a-z0-9+*/()-]/gi);
+        let invalidChars = this.userInputExpression.match(/[^a-z0-9+*/()-\s.]/gi);
         if (invalidChars !== null) {
             if (invalidChars.length === 1) {
                 this.errMessage += `Výraz nesmí obsahovat znak ${invalidChars[0]}.`
