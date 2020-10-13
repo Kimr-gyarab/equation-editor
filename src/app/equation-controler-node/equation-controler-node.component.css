@@ -1,57 +1,50 @@
 .component {
     padding: 100px;
-  }
-  
-  .example-container {
+}
+
+.example-container {
     width: 1000px;
     max-width: 100%;
     margin: 0 25px 25px 0;
     display: flex;
     vertical-align: top;
-  }
-  
-  .example-list {
-    border: solid 1px #ccc;
+}
+
+.example-list {
+    border: solid 1px var(--border);
     min-height: 60px;
     display: flex;
     flex-direction: row;
-    background: white;
+    background-color: var(--light-shades);
     border-radius: 4px;
     overflow: hidden;
-  }
-  
-  
-  
-  .fraction {
+}
+
+.fraction {
     display: grid;
     grid-auto-rows: 1fr;
-    
-  }
-  
-  .fraction-top {
+}
+
+.fraction-top {
     padding: 1rem 2rem;
     border-bottom: 1px solid black;
     justify-content: center;
     margin-top: auto;
     display: flex;
     color: rgba(0, 0, 0, 0.87);
-  }
-  
-  .fraction-bottom {
+}
+
+.fraction-bottom {
     padding: 1rem 2rem;
     border-top: 1px solid black;
     justify-content: center;
     display: flex;
     color: rgba(0, 0, 0, 0.87);
-  }
-  
-  /*ng-katex {
-    margin: auto 0;
-  }*/
-  
-  .example-box {
+}
+
+.example-box {
     padding: 1rem 0.5rem;
-    border-right: solid 1px #ccc;
+    border-right: solid 1px var(--border);
     color: rgba(0, 0, 0, 0.87);
     display: flex;
     flex-direction: row;
@@ -59,45 +52,45 @@
     justify-content: space-between;
     box-sizing: border-box;
     cursor: pointer;
-    background: white;
+    background-color: var(--light-shades);
     flex-grow: 1;
     flex-basis: 0;
-  }
-  
-  .cdk-drag-preview {
+}
+
+.cdk-drag-preview {
     box-sizing: border-box;
     border-radius: 4px;
     box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2), 0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12);
-  }
-  
-  .cdk-drag-placeholder {
+}
+
+.cdk-drag-placeholder {
     opacity: 0;
-  }
-  
-  .cdk-drag-animating {
+}
+
+.cdk-drag-animating {
     transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
-  }
-  
-  .example-box:last-child {
+}
+
+.example-box:last-child {
     border: none;
-  }
-  
-  .example-custom-placeholder {
-    background: #ccc;
+}
+
+.example-custom-placeholder {
+    background-color: var(--light-shades);
     border: dotted 3px #999;
     min-width: 60px;
     transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
-  }
-  
-  .example-list.cdk-drop-list-dragging .example-box:not(.cdk-drag-placeholder) {
+}
+
+.example-list.cdk-drop-list-dragging .example-box:not(.cdk-drag-placeholder) {
     transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
-  }
-  
-  .equility-sign {
+}
+
+.equility-sign {
     margin: auto;
-  }
-  
-  .noselect {
+}
+
+.noselect {
     -webkit-touch-callout: none;
     /* iOS Safari */
     -webkit-user-select: none;
@@ -109,19 +102,10 @@
     -ms-user-select: none;
     /* Internet Explorer/Edge */
     user-select: none;
-    /* Non-prefixed version, currently
-                                      supported by Chrome, Opera and Firefox */
-  }
-  
- .katex {
-    
-    padding: 0 0;
-  }
-  
-  .selected{
-    color: #ffbbff;
-  }
-  
-  .selected{
-    background: blue;
-  }
+    /* Non-prefixed version, currently supported by Chrome, Opera and Firefox */
+}
+
+.selected {
+    background-color: var(--light-accent);
+    color: var(--light-shades);
+}

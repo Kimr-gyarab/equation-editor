@@ -1,34 +1,15 @@
-.component {
-  padding: 100px;
-}
-
-#preview {
-  border: 1px solid #ccc;
-  border-radius: 12px;
-  height: 10rem;
-  line-height: 10rem;
-  justify-content: center;
-  font-size: 1.5rem;
-  display: flex;
-  white-space: nowrap;
-}
-
-#equationPreview {
-  
-}
-
-#errors {
-  border: 1px solid #ccc;
-  border-radius: 12px;
-  height: 10rem;
+.around-equation-container {
+  background-color: var(--light-shades);
+  border-radius: 4px;
 }
 
 .equation-container {
+  margin: 2rem auto 2rem auto;
   width: fit-content;
   display: flex;
   vertical-align: top;
   padding: 0.5rem;
-  background-color: #ffffff;
+  background-color: var(--light-shades);
   border-radius: 4px;
   overflow-x: auto;
   max-width: 100%;
@@ -43,7 +24,7 @@
   color: rgba(0, 0, 0, 0.87);
   display: flex;
   align-items: center;
-  background: white;
+  background-color: var(--light-shades);
 }
 
 .noselect {
@@ -66,15 +47,28 @@
   margin-bottom: 5px;
 }
 
-ng-katex {
-  font-size: 2.5rem;
-  padding: 0 0;
-}
-
 .equation-side#left {
   padding-left: 1rem;
 }
 
 .equation-side#right {
   padding-right: 1rem;
+}
+
+.edits {
+  margin: 2rem auto 2rem auto;
+  font-size: 1.5rem;
+  border: 1px solid var(--border);
+}
+
+.edits-left {
+  text-align: right;
+}
+
+.edits-middle {
+  text-align: middle;
+}
+
+.edits-right {
+  text-align: left;
 }

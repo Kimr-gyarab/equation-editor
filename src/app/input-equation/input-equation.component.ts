@@ -11,7 +11,7 @@ import * as nerdamer from 'nerdamer';
 })
 
 export class InputEquationComponent implements AfterViewInit {
-    @ViewChild('container') container: ElementRef;
+    @ViewChild('previewContainer') previewContainer: ElementRef;
 
     equation: Equation;
     equationAsString: string;
@@ -28,7 +28,7 @@ export class InputEquationComponent implements AfterViewInit {
     }
 
     ngAfterViewInit() {
-        this.equationPreviewWidth = this.container.nativeElement.offsetWidth;
+        this.equationPreviewWidth = this.previewContainer.nativeElement.offsetWidth;
     }
 
     parseEquation(inputString: string) {
@@ -57,35 +57,52 @@ export class InputEquationComponent implements AfterViewInit {
         this.equationAsString = this.equation.toString();
     }
 
-    checkInput(existsEquation: boolean): void {
+    checkInput(equationExists: boolean): void {
         this.errMessage = '';
 
         //invalid chars
         let invalidChars = this.equationAsString.match(/[^a-z0-9+*/()=-\s.]/gi);
         if (invalidChars !== null) {
             if (invalidChars.length === 1) {
-                this.errMessage += `Rovnice nesmí obsahovat znak ${invalidChars[0]}. `
+                this.errMessage += `Rovnice nesmí obsahovat znak ${invalidChars[0]}.`
             } else {
                 this.errMessage += `Rovnice nesmí obsahovat znaky`;
                 for (let i = 0; i < invalidChars.length; i++) {
-                    this.errMessage += ` ${invalidChars[i]}` + (i !== invalidChars.length - 1 ? ', ' : '. ');
+                    this.errMessage += ` ${invalidChars[i]}` + (i !== invalidChars.length - 1 ? ', ' : '.');
                 }
             }
             return;
         }
 
-        if (existsEquation) {
+        if (equationExists) {
             let equationVariables = this.equation.getVariable();
+            
             if (equationVariables.length === 0) {
-                this.errMessage += 'Rovnice musí obsahovat jednu neznámou. ';
+                this.errMessage += 'Rovnice musí obsahovat jednu neznámou.\n';
             } else if (equationVariables.length > 1) {
-                this.errMessage += 'Rovnice může obsahovat maximálně jednu neznámou. ';
+                this.errMessage += 'Rovnice může obsahovat maximálně jednu neznámou.\n';
             }
 
             if (!this.equation.isValid()) {
-                this.errMessage += 'Rovnice obsahuje chybu. '
+                this.errMessage += 'Rovnice obsahuje chybu.\n'
             }
+        } else {
+            let expression = (new MathNode('', this.equationAsString, true));
+            let equationVariables = expression.findVariables();
+            
+            if (equationVariables.length === 0) {
+                this.errMessage += 'Rovnice musí obsahovat jednu neznámou.\n';
+            } else if (equationVariables.length > 1) {
+                this.errMessage += 'Rovnice může obsahovat maximálně jednu neznámou.\n';
+            }
+
+
+            if (!expression.isValid()) {
+                this.errMessage += 'Rovnice obsahuje chybu.\n'
+            }
+            this.errMessage += 'Rovnice není kompletní.\n'
         }
+        this.errMessage = this.errMessage.substr(0, this.errMessage.length - 1);
     }
 
     submit() {
@@ -100,7 +117,7 @@ export class InputEquationComponent implements AfterViewInit {
         try {
             return nerdamer.convertToLaTeX(expression);
         } catch (error) {
-            this.errMessage = 'Náhled není k dispozici';
+            this.errMessage = 'Náhled není k dispozici.';
         }
     }
 
@@ -114,19 +131,15 @@ export class InputEquationComponent implements AfterViewInit {
         }
         let size = 2;
         let textLengthPx = this.equationPreviewWidth;
-        let maxSize = 2.5;
         if (this.equationPreviewWidth !== 0) {
-            textLengthPx = 0 * length * length + 17 * length - 5;
+            textLengthPx = 17 * length - 5;
             size = this.equationPreviewWidth / textLengthPx;
         }
-        if (size > maxSize) {
-            size = maxSize;
+        if (size > 2.5) {
+            size = 2.5;
         }
 
-
-        size -= 0.05;
-        //size = 1;
-        
+        size -= 0.05;        
         return size + 'rem';
     }
 }

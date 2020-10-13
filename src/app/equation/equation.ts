@@ -8,6 +8,8 @@ export class Equation {
     constructor(leftSide: string, rightSide: string) {
         this.leftSide = new MathNode('', leftSide, true);
         this.rightSide = new MathNode('', rightSide, true);
+        
+        this.correctStructure();
     }
 
     swapSides(): void {

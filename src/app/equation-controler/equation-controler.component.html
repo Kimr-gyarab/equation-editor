@@ -1,65 +1,73 @@
 <div class="component">
-  <app-input-equation></app-input-equation>
-  <h2>Řešit rovnici:</h2>
+    <h1>Editor rovnic</h1>
+    <app-input-equation></app-input-equation>
+    <h2>Řešit rovnici:</h2>
 
 
 
-
-  <div cdkDropListGroup class="equation-container">
-    <div class="equation-side" id='left'>
-      <app-equation-controler-node [node]=equation.leftSide [fontSize]='calcFontSize()'>
-      </app-equation-controler-node>
-    </div>
-    <div class="equation-sign noselect">
-      <ng-katex [equation]=equationSign style="font-size: calcFontSize();"></ng-katex>
-    </div>
-    <div class="equation-side" id='right'>
-      <app-equation-controler-node [node]=equation.rightSide [fontSize]='calcFontSize()'>
-      </app-equation-controler-node>
-    </div>
-  </div>
-
-
-  <h3>Upravit:</h3>
-  <input type="text" class="form-control col" (input)="actualizeUserInput($event.target.value);">
-  <button class="btn btn-primary" (click)='clearSelection()'>Zrušit výběr</button>
-  <button class="btn btn-primary" (click)="editEquation()">Nahradit</button>
-  <button class="btn btn-primary" (click)="multiplyEquation()">Vynásobit rovnici</button>
-  <button class="btn btn-primary" (click)="divideEquation()">Vydělit rovnici</button>
-  <button class="btn btn-primary" (click)="swapSides()">Prohodit strany</button>
-  <!--<button class="btn btn-primary" (click)="print()">Vypsat</button>-->
-  <h3>Náhled:</h3>
-  <div class="container-fluid">
-    <div class="row justify-content-between">
-      <div class="col-12 col-md-7" id="preview" #container>
-        <div id="equationPreview">
-          <!--<ng-container *ngIf="equationAsString.length === 0">
-            Náhled není k dispozici
-          </ng-container>
-          <div #preview>
-            <ng-katex [equation]="getAsLaTeX(equationAsString)" [ngStyle]="{'font-size': calcFontSize()}">
-            </ng-katex>
-          </div>-->
+    <div class="around-equation-container">
+        <div cdkDropListGroup class="equation-container" cdkScrollable>
+            <div class="equation-side" id='left'>
+                <app-equation-controler-node [node]=equation.leftSide [fontSize]='calcEditorFontSize()'>
+                </app-equation-controler-node>
+            </div>
+            <div class="equation-sign noselect">
+                <ng-katex [equation]=equationSign style="font-size: calcEditorFontSize();"></ng-katex>
+            </div>
+            <div class="equation-side" id='right'>
+                <app-equation-controler-node [node]=equation.rightSide [fontSize]='calcEditorFontSize()'>
+                </app-equation-controler-node>
+            </div>
         </div>
-      </div>
-      <div class="col-12 col-md-4" id="errors">
-        {{errMessage}}
-      </div>
     </div>
-  </div>
 
+    <h3>Upravit:</h3>
+    <input type="text" class="form-control col" (input)="actualizeUserInput($event.target.value);">
+    <button class="btn btn-primary" (click)='clearSelection()'>Zrušit výběr</button>
+    <button class="btn btn-primary" (click)="editEquation()">Nahradit</button>
+    <button class="btn btn-primary" (click)="multiplyEquation()">Vynásobit rovnici</button>
+    <button class="btn btn-primary" (click)="divideEquation()">Vydělit rovnici</button>
+    <button class="btn btn-primary" (click)="swapSides()">Prohodit strany</button>
+    <button class="btn btn-primary" (click)="back()" [disabled]='edits.length < 2'>Zpět</button>
+    <button class="btn btn-primary" (click)="next()" [disabled]='removedEdits.length === 0'>Vpřed</button>
+    <button class="btn btn-primary" (click)="print()">Vypsat</button>
+    <h3>Náhled:</h3>
+    <div class="container-fluid">
+        <div class="row justify-content-between">
+            <div class="col-12 col-md-7 card preview" #previewContainer>
+                <div class="equationPreview">
+                    <ng-container *ngIf="userInputMathNodeString.length === 0">
+                        Náhled není k dispozici
+                    </ng-container>
+                    <div #preview>
+                        <ng-katex [equation]="getAsLaTeX(userInputMathNodeString)"
+                            [ngStyle]="{'font-size': calcFontSize()}">
+                        </ng-katex>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-4 card">
+                <ng-container *ngIf="errMessage.length !== 0">
+                    <ul>
+                        <li *ngFor="let line of errMessage.split('\n')">{{line}}</li>
+                    </ul>
+                </ng-container>
+            </div>
+        </div>
+    </div>
 
-  <table>
-    <tr *ngFor='let edit of edits; let i = index'>
-      <td style="text-align: right;">
-        <ng-katex [equation]="edit.split('=')[0]"></ng-katex>
-      </td>
-      <td style="text-align: center;">
-        <ng-katex [equation]=equationSign></ng-katex>
-      </td>
-      <td style="text-align: left; size: 300;">
-        <ng-katex [equation]="edit.split('=')[1]"></ng-katex>
-      </td>
-    </tr>
-  </table>
+    <h2>Zobrazení postupu:</h2>
+    <table class="edits">
+        <tr *ngFor='let edit of edits'>
+            <td class="edits-left">
+                <ng-katex [equation]="getAsLaTeX(edit.split('=')[0])"></ng-katex>
+            </td>
+            <td class="edits-middle">
+                <ng-katex [equation]=equationSign></ng-katex>
+            </td>
+            <td class="edits-right">
+                <ng-katex [equation]="getAsLaTeX(edit.split('=')[1])"></ng-katex>
+            </td>
+        </tr>
+    </table>
 </div>

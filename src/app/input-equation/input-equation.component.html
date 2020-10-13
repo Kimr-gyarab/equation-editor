@@ -9,19 +9,23 @@
 <h3>Náhled:</h3>
 <div class="container-fluid">
   <div class="row justify-content-between">
-    <div class="col-12 col-md-7" id="preview" #container>
-      <div id="equationPreview">
+    <div class="col-12 col-md-7 card" id="preview" #previewContainer>
+      <div class="equationPreview">
         <ng-container *ngIf="equationAsString.length === 0">
           Náhled není k dispozici
         </ng-container>
         <div #preview>
-          <ng-katex [equation]="getAsLaTeX(equationAsString)" [ngStyle]="{'font-size': calcFontSize()}" >
+          <ng-katex [equation]="getAsLaTeX(equationAsString)" [ngStyle]="{'font-size': calcFontSize()}">
           </ng-katex>
         </div>
       </div>
     </div>
-    <div class="col-12 col-md-4" id="errors">
-      {{errMessage}}
+    <div class="col-12 col-md-4 card">
+      <ng-container *ngIf="errMessage.length !== 0">
+        <ul>
+          <li *ngFor="let line of errMessage.split('\n')">{{line}}</li>
+        </ul>
+      </ng-container>
     </div>
   </div>
 </div>

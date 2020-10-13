@@ -195,7 +195,7 @@ export class MathNode {
             return string.substr(1);
         }
         return string;
-    }881632
+    }
 
     /**
      * Corrects structure of MathNodes – removes: 0 from addition, 1 form multiplication, unnecessary nesting; corrects replaced nodes and value of root.
@@ -214,8 +214,12 @@ export class MathNode {
                 this.value = [this.value];
             } */else if (typeof (this.value) === 'string') {
                 //correct type of root value
-
+                console.log(this.value);
+                
                 this.value = [this.getCopy()];
+                this.value[0].root = false;
+                anyChanges = true;
+                console.log(this.value);
             }
         }
 
@@ -255,7 +259,7 @@ export class MathNode {
             let newValue = [];
             for (let i = 0; i < this.value.length; i++) {
                 if ((this.value[i].value !== '1' && this.value[0].sign === '*') ||
-                    this.value[i].value !== '0' || this.root) {
+                    (this.value[i].value !== '0' && this.value[0].sign !== '*')) {
                     newValue.push(this.value[i]);
                 } else {
                     anyChanges = true;
@@ -264,8 +268,9 @@ export class MathNode {
 
             if (newValue.length === 0 && this.value[0].sign === '*') {
                 this.value = '1';
-            } else if (newValue.length === 0) {
-                this.value = '0';
+            } else if (newValue.length === 0 && this.root) {
+                this.value = [new MathNode('+', '0')];
+                return false;
             } else {
                 this.value = newValue;
             }
