@@ -56,7 +56,6 @@ export class MathNode {
      * Corrects this.value from string with +-/* to array of MathNodes
      */
     corectMathNode(): void {
-
         let valAsString: string = this.value;
         let brackets: number = 0;
         let addition: boolean = false;
@@ -201,7 +200,7 @@ export class MathNode {
      * Corrects structure of MathNodes – removes: 0 from addition, 1 form multiplication, unnecessary nesting; corrects replaced nodes and value of root.
      * Returns whether any changes were made.
      */
-    correctStructure(): boolean {        
+    correctStructure(): boolean {
         let anyChanges = false;
         if (this.root) {
             if (this.value.length === 0) {
@@ -215,7 +214,7 @@ export class MathNode {
             } */else if (typeof (this.value) === 'string') {
                 //correct type of root value
                 console.log(this.value);
-                
+
                 this.value = [this.getCopy()];
                 this.value[0].root = false;
                 anyChanges = true;
@@ -225,12 +224,12 @@ export class MathNode {
 
         //creates fraction from decimal
         if (typeof (this.value) === 'string' && this.value.match(/[^0-9.]/) === null) {
-            if(this.value.indexOf('.') !== -1){
+            if (this.value.indexOf('.') !== -1) {
                 let frac = nerdamer.convertFromLaTeX(nerdamer.convertToLaTeX(this.value).toString()).toString();
                 this.value = [new MathNode('', frac)];
                 anyChanges = true;
-            }else{
-                if (this.value.toString() !== parseInt(this.value).toString()){
+            } else {
+                if (this.value.toString() !== parseInt(this.value).toString()) {
                     anyChanges = true;
                 }
                 this.value = '' + parseInt(this.value);
@@ -258,8 +257,8 @@ export class MathNode {
             //remove redundant 1 from multiplication
             let newValue = [];
             for (let i = 0; i < this.value.length; i++) {
-                if ((this.value[i].value !== '1' && this.value[0].sign === '*') ||
-                    (this.value[i].value !== '0' && this.value[0].sign !== '*')) {
+                if ((this.value[i].toString() !== '1' && this.value[0].sign === '*') ||
+                    (this.value[i].toString() !== '0' && this.value[0].sign !== '*')) {
                     newValue.push(this.value[i]);
                 } else {
                     anyChanges = true;
@@ -273,6 +272,16 @@ export class MathNode {
                 return false;
             } else {
                 this.value = newValue;
+            }
+        }
+
+        if (Array.isArray(this.value)) {
+            if (this.value.length === 1 && this.value[0].sign === '*') {
+                if (typeof (this.value) !== 'string') {
+                    this.value[0].sign = this.value[0].value[0].sign;
+                    this.value[0].value = this.value[0].value[0].value;
+                }
+                
             }
         }
 
@@ -319,13 +328,22 @@ export class MathNode {
      * @param expression to multiply with
      */
     multiply(expression: MathNode) {
+        if (expression.toString() === '1') {
+            return;
+        }
+        if (expression.toString() === '-1') {
+            this.value.forEach(element => {
+                element.changeSign();
+            });
+            return;
+        }
         this.value.forEach(element => {
             if (Array.isArray(element.value)) {
-
                 if (element.value[0].sign === '/') {
-                    this.multiplyDivision(element, expression.getCopy());
+                    this.multiplyDivision(element, new MathNode('*', expression.toString()));
+
                 } else if (element.value[0].sign === '*') {
-                    element.value.push(new MathNode('*', expression));
+                    element.value.push(new MathNode('*', expression.toString()));
                 } else {
                     let prevVal = new MathNode('*', element.getCopy().value);
                     element.value = [prevVal, new MathNode('*', expression.toString())];
@@ -357,6 +375,9 @@ export class MathNode {
             for (let i = 0; i < mathNode.value[1].value.length; i++) {
                 if (MathNode.areExpEqual(mathNode.value[1].value[i], expression)) {
                     mathNode.value[1].value.splice(i, 1);
+                    if (mathNode.value[1].value.length === 0) {
+                        mathNode.value = mathNode.value[0].value;
+                    }
                     return;
                 }
             }
@@ -364,6 +385,9 @@ export class MathNode {
                 if (MathNode.areAbsExpEqual(mathNode.value[1].value[i], expression)) {
                     mathNode.value[1].value.splice(i, 1);
                     mathNode.changeSign();
+                    if (mathNode.value[1].value.length === 0) {
+                        mathNode.value = mathNode.value[0];
+                    }
                     return;
                 }
             }
@@ -391,47 +415,38 @@ export class MathNode {
                 } else if (mathNode.value[0].value[0].sign === '/') {
                     //Last executed operation in numerator would be division
 
-                    let prevVal = new MathNode('*', mathNode.value[0].value);
+                    let prevVal = new MathNode('*', mathNode.value[0].toString());
                     mathNode.value[0].value = [expression, prevVal];
                 } else {
                     //Last executed operation in numerator would be addition or substraction
 
-                    let prevVal = new MathNode('*', mathNode.value[0].value);
+                    let prevVal = new MathNode('*', mathNode.value[0].toString());
                     mathNode.value[0].value = [expression, prevVal];
+
                 }
             } else {
                 //No better alternative found – expression multiplies nominator
-                let prevVal = new MathNode('*', mathNode.value[0].value);
+                let prevVal = new MathNode('*', mathNode.value[0].toString());
                 mathNode.value[0].value = [expression, prevVal];
+
             }
         }
-
     }
-
-    /*removeUnnecessaryBrackets() {
-        if (Array.isArray(this.value)) {
-            for (let i = 0; i < this.value.length; i++) {
-                if (this.value[i].sign === '+' && (this.value[i].value[0].sign === '+' || this.value[i].value[0].sign === '-')) {
-                    let bracketValue = this.value[i];
-                    this.value.splice(i, 1);
-                    for (let j = 0; j < bracketValue.length; j++) {
-                        this.value.splice(i + j, 0, bracketValue[j]);
-                    }
-                }
-
-            }
-            for (let i = 0; i < this.value.length; i++) {
-                this.value[i].removeUnnecessaryBrackets();
-            }
-        }
-
-    }*/
 
     /**
      * Devides MathNode by expression. Called only in root MathNode
      * @param expression to devide with
      */
     divide(expression: MathNode) {
+        if (expression.toString() === '1') {
+            return;
+        }
+        if (expression.toString() === '-1') {
+            this.value.forEach(element => {
+                element.changeSign();
+            });
+            return;
+        }
         this.value.forEach(element => {
             if (Array.isArray(element.value)) {
 
@@ -441,6 +456,7 @@ export class MathNode {
                     this.divideDivision(element, expression.getCopy());
                 } else {
                     element.value = [new MathNode('/', element.value), new MathNode('/', expression.toString())];
+
                 }
             } else if (element.value !== '0') {
                 if (MathNode.areExpEqual(element, expression)) {
@@ -456,9 +472,9 @@ export class MathNode {
                         element.changeSign();
                         tempExp.changeSign();
                     }
-                    if (expression.value !== '1') {
-                        element.value = [new MathNode('/', element.value), new MathNode('/', tempExp.toString())];
-                    }
+
+                    element.value = [new MathNode('/', element.value), new MathNode('/', tempExp.toString())];
+
                 }
             }
         });
@@ -489,9 +505,7 @@ export class MathNode {
             mathNode.changeSign();
             tempExp.changeSign();
         }
-        if (expression.value !== '1') {
-            mathNode.value = [new MathNode('/', mathNode.value), new MathNode('/', tempExp.toString())];
-        }
+        mathNode.value = [new MathNode('/', mathNode.value), new MathNode('/', tempExp.toString())];
 
     }
 
@@ -503,31 +517,44 @@ export class MathNode {
     divideDivision(mathNode: MathNode, expression: MathNode) {
         if (MathNode.areExpEqual(mathNode.value[0], expression)) {
             mathNode.value[0].value = '1';
+        } else if (MathNode.areAbsExpEqual(mathNode.value[0], expression)) {
+            mathNode.value[0].value = '1';
+            mathNode.changeSign();
         } else {
             if (Array.isArray(mathNode.value[0].value)) {
                 if (mathNode.value[0].value[0].sign === '*') {
                     for (let i = 0; i < mathNode.value[0].value.length; i++) {
                         if (MathNode.areExpEqual(mathNode.value[0].value[i], expression)) {
                             mathNode.value[0].value.splice(i, 1);
+                            if (mathNode.value[0].value.length === 0) {
+                                mathNode.value[0].value = [new MathNode('', '1')];
+                            }
                             return;
-
                         }
                     }
-
+                    for (let i = 0; i < mathNode.value[0].value.length; i++) {
+                        if (MathNode.areAbsExpEqual(mathNode.value[0].value[i], expression)) {
+                            mathNode.value[0].value.splice(i, 1);
+                            mathNode.changeSign();
+                            if (mathNode.value[0].value.length === 0) {
+                                mathNode.value[0].value = [new MathNode('', '1')];
+                            }
+                            return;
+                        }
+                    }
                 }
             }
             if (Array.isArray(mathNode.value[1].value)) {
                 if (mathNode.value[1].value[0].sign === '*') {
                     mathNode.value[1].value.push(new MathNode('*', expression.toString()));
                 } else if (mathNode.value[1].value[0].sign === '/') {
-
+                    let prevVal = new MathNode('*', mathNode.value[1].toString());
+                    mathNode.value[1].value = [prevVal, new MathNode('*', expression.toString())];
                 } else if (mathNode.value[1].value[0].sign === '+' || mathNode.value[1].value[0].sign === '-') {
-
                     let prevVal = new MathNode('*', mathNode.value[1].value);
                     mathNode.value[1].value = [prevVal, new MathNode('/', expression.toString())];
                 }
             } else {
-
                 let prevVal = new MathNode('*', mathNode.value[1].value);
                 mathNode.value[1].value = [prevVal, new MathNode('*', expression.toString())];
             }
@@ -684,14 +711,16 @@ export class MathNode {
             if (!first || this.sign.match(/([+*/])/) === null) {
                 string += this.sign;
             }
-            if (this.value[0].sign !== '*' && this.value[0].sign !== '/' && !this.root) {
+            if ((this.value[0].sign !== '*' && !this.root) && !(this.value[0].sign === '/' && this.sign !== '/')
+            ) {
                 string += '(';
             }
 
             for (let i = 0; i < this.value.length; i++) {
                 string += this.value[i].toString(i === 0);
             }
-            if (this.value[0].sign !== '*' && this.value[0].sign !== '/' && !this.root) {
+            if ((this.value[0].sign !== '*' && !this.root) && !(this.value[0].sign === '/' && this.sign !== '/')
+            ) {
                 string += ')';
             }
         } else {
@@ -712,6 +741,7 @@ export class MathNode {
     static areExpEqual(exp1: MathNode, exp2: MathNode): boolean {
         let exp1AsString = exp1.toString();
         let exp2AsString = exp2.toString();
+
         let e1 = nerdamer(exp1AsString.toString(), undefined, "expand");
         let e2 = nerdamer(exp2AsString.toString(), undefined, "expand");
         let diff: string = `${e1.text()} - (${e2.text()})`;

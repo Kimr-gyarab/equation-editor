@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { EmitEvent, EventBusService, Events } from '../core/event-bus.service';
 import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { MathNode } from '../equation/math-node';
@@ -10,16 +10,18 @@ import * as nerdamer from 'nerdamer';
     styleUrls: ['./equation-controler-node.component.css']
 })
 export class EquationControlerNodeComponent {
-    @Input() node;
-    @Input() fontSize;
+    @Input() node: MathNode;
+    @Input() fontSize: string;
 
     lBracket = '(';
     rBracket = ')';
-    lastTestedSelected: MathNode = new MathNode();
 
-    constructor(private eventbus: EventBusService) {
-    }
+    constructor(private eventbus: EventBusService) { }
 
+    /**
+     * Changes position of dragged element according to event
+     * @param event 
+     */
     drop(event: CdkDragDrop<any>) {
         if (event.previousContainer === event.container) {
             moveItemInArray(event.container.data.value, event.previousIndex, event.currentIndex);
@@ -40,20 +42,11 @@ export class EquationControlerNodeComponent {
         this.eventbus.emit(new EmitEvent(Events.NodeSelected, item));
     }
 
-    isArray(nodeVal) {
-        return Array.isArray(nodeVal);
+    isArray(nodeValue: any) {
+        return Array.isArray(nodeValue);
     }
 
-    isDragable(item) {
-        return item.sign === '/';
-    }
-
-
-    itemToTeX(nodeVal) {
-        return nodeVal;
-    }
-
-    hasBrackets(item: MathNode, i: number) {
+    hasBrackets(item: MathNode) {
         return this.isArray(item.value) && item.value[0].sign !== '*' && item.value[0].sign !== '/' && item.sign !== '/';
     }
 
@@ -77,18 +70,16 @@ export class EquationControlerNodeComponent {
         if (item.selected) {
             classes['selected'] = true;
         }
-        if (this.node.value[0].sign !== '/') {
-            classes['example-box'] = true;
+        if (item.sign !== '/') {
+            classes['node'] = true;
         }
-        if (this.node.value[0].sign === '/' && i % 2 == 0) {
+        if (item.sign === '/' && i === 0) {
             classes['fraction-top'] = true;
         }
-        if (this.node.value[0].sign === '/' && i % 2 == 1) {
+        if (item.sign === '/' && i === 1) {
             classes['fraction-bottom'] = true;
         }
         return classes;
-        //{'example-box': node.value[0].sign !== '/', 'fraction-top': (node.value[0].sign === '/' && i%2==0),
-        //'fraction-bottom': (node.value[0].sign === '/' && i % 2 == 1), 'selected': item.selected}
     }
 
     getAsLaTeX(expression: string) {

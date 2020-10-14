@@ -16,15 +16,11 @@ html, body {
     overflow-x: hidden;
 }
 
-html {
-    color: bisque;
-}
-
 body {
     max-width: 1480px;
-    color: bisque;
+    color: var(--light-shades);
     margin: 0 auto;
-    padding: 0 40px;
+    padding: 40px 40px 0 40px;
     font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
@@ -34,10 +30,17 @@ body {
     border: 3px solid var(--main-brand-color);
     background-color: var(--light-accent);
     color: var(--dark-shades);
+    font-size: 1.25rem;
+    padding: 0.5rem 0.5rem;
+}
+
+.errLines {
+    padding-left: 2rem;
 }
 
 .preview {
-    line-height: 10rem;
+    height: 10rem;
+    line-height: 8.625rem;
     font-size: 1.5rem;
 }
 

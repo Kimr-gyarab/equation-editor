@@ -4,7 +4,6 @@
 }
 
 .equation-container {
-  margin: 2rem auto 2rem auto;
   width: fit-content;
   display: flex;
   vertical-align: top;
@@ -42,11 +41,6 @@
   /* Non-prefixed version, currently supported by Chrome, Opera and Firefox */
 }
 
-.btn {
-  margin-right: 5px;
-  margin-bottom: 5px;
-}
-
 .equation-side#left {
   padding-left: 1rem;
 }
@@ -56,9 +50,12 @@
 }
 
 .edits {
-  margin: 2rem auto 2rem auto;
+  margin: 1rem auto 1rem auto;
   font-size: 1.5rem;
-  border: 1px solid var(--border);
+}
+
+.edits tr {
+  padding-bottom: 0.5rem;
 }
 
 .edits-left {

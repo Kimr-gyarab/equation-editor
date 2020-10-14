@@ -1,16 +1,4 @@
-.component {
-    padding: 100px;
-}
-
-.example-container {
-    width: 1000px;
-    max-width: 100%;
-    margin: 0 25px 25px 0;
-    display: flex;
-    vertical-align: top;
-}
-
-.example-list {
+.node-list {
     border: solid 1px var(--border);
     min-height: 60px;
     display: flex;
@@ -20,29 +8,7 @@
     overflow: hidden;
 }
 
-.fraction {
-    display: grid;
-    grid-auto-rows: 1fr;
-}
-
-.fraction-top {
-    padding: 1rem 2rem;
-    border-bottom: 1px solid black;
-    justify-content: center;
-    margin-top: auto;
-    display: flex;
-    color: rgba(0, 0, 0, 0.87);
-}
-
-.fraction-bottom {
-    padding: 1rem 2rem;
-    border-top: 1px solid black;
-    justify-content: center;
-    display: flex;
-    color: rgba(0, 0, 0, 0.87);
-}
-
-.example-box {
+.node {
     padding: 1rem 0.5rem;
     border-right: solid 1px var(--border);
     color: rgba(0, 0, 0, 0.87);
@@ -71,18 +37,11 @@
     transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
 }
 
-.example-box:last-child {
+.node:last-child {
     border: none;
 }
 
-.example-custom-placeholder {
-    background-color: var(--light-shades);
-    border: dotted 3px #999;
-    min-width: 60px;
-    transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
-}
-
-.example-list.cdk-drop-list-dragging .example-box:not(.cdk-drag-placeholder) {
+.node-list.cdk-drop-list-dragging .node:not(.cdk-drag-placeholder) {
     transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
 }
 
@@ -90,22 +49,42 @@
     margin: auto;
 }
 
-.noselect {
-    -webkit-touch-callout: none;
-    /* iOS Safari */
-    -webkit-user-select: none;
-    /* Safari */
-    -khtml-user-select: none;
-    /* Konqueror HTML */
-    -moz-user-select: none;
-    /* Old versions of Firefox */
-    -ms-user-select: none;
-    /* Internet Explorer/Edge */
-    user-select: none;
-    /* Non-prefixed version, currently supported by Chrome, Opera and Firefox */
+.fraction {
+    display: grid;
+    grid-auto-rows: 1fr;
+}
+
+.fraction-top {
+    padding: 1rem 2rem;
+    border-bottom: 1px solid black;
+    justify-content: center;
+    height: 100%;
+    display: flex;
+    color: rgba(0, 0, 0, 0.87);
+}
+
+.fraction-top>ng-katex {
+    margin-top: auto;
+    margin-bottom: 0;
+}
+
+.fraction-bottom {
+    padding: 1rem 2rem;
+    border-top: 1px solid black;
+    justify-content: center;
+    display: flex;
+    color: rgba(0, 0, 0, 0.87);
 }
 
 .selected {
     background-color: var(--light-accent);
-    color: var(--light-shades);
+}
+
+.noselect {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }

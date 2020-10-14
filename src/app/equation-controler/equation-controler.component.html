@@ -5,8 +5,8 @@
 
 
 
-    <div class="around-equation-container">
-        <div cdkDropListGroup class="equation-container" cdkScrollable>
+    <div class="around-equation-container m-1">
+        <div cdkDropListGroup class="equation-container mx-auto m-1" cdkScrollable>
             <div class="equation-side" id='left'>
                 <app-equation-controler-node [node]=equation.leftSide [fontSize]='calcEditorFontSize()'>
                 </app-equation-controler-node>
@@ -20,21 +20,27 @@
             </div>
         </div>
     </div>
-
+    <button class="btn btn-secondary m-1" (click)="back()" [disabled]='edits.length < 2'>Zpět</button>
+    <button class="btn btn-secondary m-1" (click)="next()" [disabled]='removedEdits.length === 0'>Vpřed</button>
+    <button class="btn btn-secondary m-1" (click)='clearSelection()'>Zrušit výběr</button>
     <h3>Upravit:</h3>
-    <input type="text" class="form-control col" (input)="actualizeUserInput($event.target.value);">
-    <button class="btn btn-primary" (click)='clearSelection()'>Zrušit výběr</button>
-    <button class="btn btn-primary" (click)="editEquation()">Nahradit</button>
-    <button class="btn btn-primary" (click)="multiplyEquation()">Vynásobit rovnici</button>
-    <button class="btn btn-primary" (click)="divideEquation()">Vydělit rovnici</button>
-    <button class="btn btn-primary" (click)="swapSides()">Prohodit strany</button>
-    <button class="btn btn-primary" (click)="back()" [disabled]='edits.length < 2'>Zpět</button>
-    <button class="btn btn-primary" (click)="next()" [disabled]='removedEdits.length === 0'>Vpřed</button>
-    <button class="btn btn-primary" (click)="print()">Vypsat</button>
-    <h3>Náhled:</h3>
+    <input type="text" class="form-control col m-1" (input)="actualizeUserInput($event.target.value);">
+
     <div class="container-fluid">
+        <div class="row align-items-start">
+            <button class="btn btn-primary col-md-auto m-1" (click)="editEquation()">Nahradit</button>
+            <button class="btn btn-primary col-md-auto m-1" (click)="multiplyEquation()">Vynásobit rovnici</button>
+            <button class="btn btn-primary col-md-auto m-1" (click)="divideEquation()">Vydělit rovnici</button>
+            <button class="btn btn-primary col-md-auto m-1" (click)="swapSides()">Prohodit strany</button>
+            <button class="btn btn-primary col-md-auto m-1" (click)="print()">Vypsat</button>
+        </div>
+    </div>
+
+    
+    <h3>Náhled:</h3>
+    <div class="container-fluid  mb-5">
         <div class="row justify-content-between">
-            <div class="col-12 col-md-7 card preview" #previewContainer>
+            <div class="col-12 col-md-7 card preview m-1" #previewContainer>
                 <div class="equationPreview">
                     <ng-container *ngIf="userInputMathNodeString.length === 0">
                         Náhled není k dispozici
@@ -46,9 +52,9 @@
                     </div>
                 </div>
             </div>
-            <div class="col-12 col-md-4 card">
+            <div class="col-12 col-md-4 card m-1">
                 <ng-container *ngIf="errMessage.length !== 0">
-                    <ul>
+                    <ul class="errLines">
                         <li *ngFor="let line of errMessage.split('\n')">{{line}}</li>
                     </ul>
                 </ng-container>
@@ -59,14 +65,8 @@
     <h2>Zobrazení postupu:</h2>
     <table class="edits">
         <tr *ngFor='let edit of edits'>
-            <td class="edits-left">
-                <ng-katex [equation]="getAsLaTeX(edit.split('=')[0])"></ng-katex>
-            </td>
-            <td class="edits-middle">
-                <ng-katex [equation]=equationSign></ng-katex>
-            </td>
-            <td class="edits-right">
-                <ng-katex [equation]="getAsLaTeX(edit.split('=')[1])"></ng-katex>
+            <td class="edits-left pt-2 pb-2">
+                <ng-katex [equation]="getAsLaTeX(edit)"></ng-katex>
             </td>
         </tr>
     </table>

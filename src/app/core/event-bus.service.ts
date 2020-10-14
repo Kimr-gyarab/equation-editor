@@ -1,5 +1,11 @@
+/**
+ * This part of code is from https://github.com/DanWahlin/Angular-JumpStart/blob/master/src/app/core/services/event-bus.service.ts
+ * from Dan Wahlin: https://github.com/DanWahlin
+ * licenced under MIT Licence
+ */
+
 import { Injectable } from '@angular/core';
-import { Subject, Subscription, Observable } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 
 @Injectable({
@@ -24,9 +30,7 @@ export class EventBusService {
 }
 
 export class EmitEvent {
-
   constructor(public name: any, public value?: any) { }
-
 }
 
 

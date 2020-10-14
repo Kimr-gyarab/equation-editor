@@ -109,7 +109,7 @@ export class InputEquationComponent implements AfterViewInit {
         this.checkInput(true);
         if (this.errMessage.length === 0) {
             this.equation.correctStructure();
-            this.eventbus.emit(new EmitEvent(Events.NewEquationSubmited, this.equation));
+            this.eventbus.emit(new EmitEvent(Events.NewEquationSubmited, this.equation.getCopy()));
         }
     }
 

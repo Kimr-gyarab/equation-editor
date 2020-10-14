@@ -16,7 +16,6 @@ export class Equation {
         let temp = this.leftSide
         this.leftSide = this.rightSide;
         this.rightSide = temp;
-
     }
 
     multiply(expressionAsString: string) {
@@ -33,11 +32,14 @@ export class Equation {
         this.rightSide.divide(expression);
     }
 
+    /**
+     * Checks whether the Equation is mathematicly valid.
+     */
     isValid(): boolean {
         return this.leftSide.isValid() && this.rightSide.isValid();
     }
 
-    areChildrenSibilings(firstNode: MathNode, secondNode: MathNode): boolean {
+    areMathNodesSibilings(firstNode: MathNode, secondNode: MathNode): boolean {
         return this.leftSide.areChildrenSibilings(firstNode, secondNode) || this.rightSide.areChildrenSibilings(firstNode, secondNode);
     }
 
