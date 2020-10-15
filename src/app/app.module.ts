@@ -12,12 +12,12 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { InputEquationComponent } from './input-equation/input-equation.component';
 
 @NgModule({
-  declarations: [	
+  declarations: [
     AppComponent,
     EquationControlerComponent,
     EquationControlerNodeComponent,
     InputEquationComponent
-   ],
+  ],
   imports: [
     BrowserModule,
     AppRoutingModule,

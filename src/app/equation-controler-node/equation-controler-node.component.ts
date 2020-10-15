@@ -20,7 +20,7 @@ export class EquationControlerNodeComponent {
 
     /**
      * Changes position of dragged element according to event
-     * @param event 
+     * @param event CdkDragDrop<any>
      */
     drop(event: CdkDragDrop<any>) {
         if (event.previousContainer === event.container) {
@@ -66,7 +66,8 @@ export class EquationControlerNodeComponent {
     }
 
     getCssClasses(item: MathNode, i: number) {
-        let classes = {};
+        /* tslint:disable:no-string-literal */
+        const classes = {};
         if (item.selected) {
             classes['selected'] = true;
         }
@@ -79,6 +80,7 @@ export class EquationControlerNodeComponent {
         if (item.sign === '/' && i === 1) {
             classes['fraction-bottom'] = true;
         }
+        /* tslint:disable:no-string-literal */
         return classes;
     }
 

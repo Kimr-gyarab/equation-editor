@@ -1,6 +1,6 @@
 import { MathNode } from './../equation/math-node';
 import { Equation } from './../equation/equation';
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { EventBusService, Events } from '../core/event-bus.service';
 import * as nerdamer from 'nerdamer';
@@ -11,7 +11,7 @@ import * as nerdamer from 'nerdamer';
     styleUrls: ['./equation-controler.component.css']
 })
 
-export class EquationControlerComponent implements OnInit {
+export class EquationControlerComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild('previewContainer') previewContainer: ElementRef;
 
     equation: Equation;
@@ -29,8 +29,8 @@ export class EquationControlerComponent implements OnInit {
     equationSign = '=';
 
     constructor(private eventbus: EventBusService) {
-        this.equation = new Equation('1+(1+4*(2+9))', 'x2+((1+1+2)/2)/(2/3)+1');
-        //this.equation = new Equation('1/(2/3)', 'a/2/3');
+        this.equation = new Equation('1-(1+4*(2+9))', 'x2-((1+1+2)/2)/(2/3)-2');
+        // this.equation = new Equation('1/(2/3)', 'a/2/3');
         this.edits = [];
         this.removedEdits = [];
 
@@ -55,8 +55,9 @@ export class EquationControlerComponent implements OnInit {
                 this.lastTestedSelected = newSelected;
                 return;
             }
+
             if (newSelected.selected && this.equation.areMathNodesSibilings(newSelected, this.selection[0])) {
-                this.selection.splice(this.selection.indexOf(newSelected), 1);  
+                this.selection.splice(this.selection.indexOf(newSelected), 1);
                 newSelected.setSelected(false);
                 this.lastTestedSelected = newSelected;
                 return;
@@ -71,11 +72,26 @@ export class EquationControlerComponent implements OnInit {
                 this.selection.push(newSelected);
             }
 
+
+            if (this.selection.length === 2 && this.selection[0].sign === '/') {
+
+                let fraction = this.equation.findParentNode(this.selection[0]);
+                if (fraction !== null) {
+                    /*if (fraction.value[0] !== this.selection[0]) {
+                        const tempVal = this.selection[0];
+                        this.selection[0] = this.selection[1];
+                        this.selection[1] = tempVal;
+                    }*/
+                    this.selection = [fraction];
+                }
+            }
+
             this.selection.forEach(element => {
                 element.setSelected(true);
             });
             this.lastTestedSelected = newSelected;
         });
+
         this.eventbusSub = this.eventbus.on(Events.NewEquationSubmited, (eqation: Equation) => {
             this.equation = eqation;
             this.edits = [];
@@ -107,11 +123,11 @@ export class EquationControlerComponent implements OnInit {
         }
         this.errMessage = '';
 
-        //invalid chars
-        let invalidChars = this.userInputExpression.match(/[^a-z0-9+*/()-\s.]/gi);
+        // invalid chars
+        const invalidChars = this.userInputExpression.match(/[^a-z0-9+*/()-\s.]/gi);
         if (invalidChars !== null) {
             if (invalidChars.length === 1) {
-                this.errMessage += `Výraz nesmí obsahovat znak ${invalidChars[0]}.`
+                this.errMessage += `Výraz nesmí obsahovat znak ${invalidChars[0]}.`;
             } else {
                 this.errMessage += `Výraz nesmí obsahovat znaky`;
                 for (let i = 0; i < invalidChars.length; i++) {
@@ -121,10 +137,10 @@ export class EquationControlerComponent implements OnInit {
             return;
         }
 
-        let expression: MathNode = new MathNode('', this.userInputExpression);
+        const expression: MathNode = new MathNode('', this.userInputExpression);
 
         let expressionVariables = expression.findVariables();
-        let equationVariable = this.equation.getVariable();
+        const equationVariable = this.equation.getVariable();
         expressionVariables = expressionVariables.replace(equationVariable, '');
 
         if (expressionVariables.length !== 0) {
@@ -139,35 +155,35 @@ export class EquationControlerComponent implements OnInit {
         }
 
         if (!expression.isValid()) {
-            this.errMessage += 'Výraz obsahuje chybu.'
+            this.errMessage += 'Výraz obsahuje chybu.';
             return;
         }
 
         if (operation === Operations.EditEquation) {
             if (this.selection.length === 0) {
-                this.errMessage += 'Není vybrán žádný výraz k nahrazení.'
+                this.errMessage += 'Není vybrán žádný výraz k nahrazení.';
                 return;
             }
 
-            let selectedExpression = new MathNode('', this.selection, true);
+            const selectedExpression = new MathNode('', this.selection, true);
             if (!MathNode.areExpEqual(selectedExpression, expression)) {
-                this.errMessage += 'Hodnota vybraného výrazu není sejná jako hodnota napsaného výrazu.\n'
+                this.errMessage += 'Hodnota vybraného výrazu není sejná jako hodnota napsaného výrazu.\n';
             }
 
         } else if (operation === Operations.MultiplyEquation) {
             if (MathNode.areExpEqual(new MathNode('', 0), expression)) {
-                this.errMessage += 'Rovnici nelze násobit výrazem rovným nule.\n'
+                this.errMessage += 'Rovnici nelze násobit výrazem rovným nule.\n';
             }
             if (expression.findVariables().length !== 0) {
-                this.errMessage += 'Rovnici nelze násobit výrazem obsahujícím neznámou.\n'
+                this.errMessage += 'Rovnici nelze násobit výrazem obsahujícím neznámou.\n';
             }
 
         } else if (operation === Operations.DivideEquation) {
             if (MathNode.areExpEqual(new MathNode('', 0), expression)) {
-                this.errMessage += 'Rovnici nelze dělit výrazem rovným nule.\n'
+                this.errMessage += 'Rovnici nelze dělit výrazem rovným nule.\n';
             }
             if (expression.findVariables().length !== 0) {
-                this.errMessage += 'Rovnici nelze dělit výrazem obsahujícím neznámou.\n'
+                this.errMessage += 'Rovnici nelze dělit výrazem obsahujícím neznámou.\n';
             }
         }
         this.errMessage = this.errMessage.substr(0, this.errMessage.length - 1);
@@ -181,6 +197,9 @@ export class EquationControlerComponent implements OnInit {
 
         if (this.errMessage.length === 0) {
             let expression: MathNode = new MathNode('', this.userInputExpression);
+            console.log(expression);
+
+            // ????
             if (!Array.isArray(expression.value)) {
                 if (this.selection[0].sign === '/' && expression.sign === '-') {
                     expression = new MathNode('+', [expression]);
@@ -190,13 +209,20 @@ export class EquationControlerComponent implements OnInit {
                 }
 
                 this.equation.deselectNodes();
+                this.selection[0].value = expression.value;
+            } else {
+                this.selection[0].sign = expression.value[0].sign;
+                this.selection[0].value = expression.value[0].value;
             }
-            this.selection[0].value = expression.value;
+
+            
 
             for (let i = 1; i < this.selection.length; i++) {
                 this.selection[i].value = '0';
             }
             this.clearSelection();
+            console.log(this.equation.toString());
+
             this.equation.correctStructure();
             this.addEdit();
         }
@@ -246,12 +272,12 @@ export class EquationControlerComponent implements OnInit {
 
     back() {
         this.removedEdits.push(this.edits.pop());
-        let last = this.edits[this.edits.length - 1];
+        const last = this.edits[this.edits.length - 1];
         this.equation = new Equation(last.split('=')[0], last.split('=')[1]);
     }
 
     next() {
-        let next = this.removedEdits.pop();
+        const next = this.removedEdits.pop();
         this.edits.push(next);
         this.equation = new Equation(next.split('=')[0], next.split('=')[1]);
     }
@@ -281,7 +307,7 @@ export class EquationControlerComponent implements OnInit {
         if (this.userInputMathNodeString.length === 0) {
             return '2rem';
         }
-        let length = this.userInputMathNodeString.length;
+        const length = this.userInputMathNodeString.length;
         let size = 2;
         let textLengthPx = this.expressionPreviewWidth;
         if (this.expressionPreviewWidth !== 0) {

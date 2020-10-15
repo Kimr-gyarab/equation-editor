@@ -8,28 +8,31 @@ export class Equation {
     constructor(leftSide: string, rightSide: string) {
         this.leftSide = new MathNode('', leftSide, true);
         this.rightSide = new MathNode('', rightSide, true);
-        
         this.correctStructure();
     }
 
     swapSides(): void {
-        let temp = this.leftSide
+        const temp = this.leftSide;
         this.leftSide = this.rightSide;
         this.rightSide = temp;
     }
 
     multiply(expressionAsString: string) {
-        let expression: MathNode = new MathNode('', expressionAsString);
+        const expression: MathNode = new MathNode('', expressionAsString);
 
         this.leftSide.multiply(expression);
         this.rightSide.multiply(expression);
+
+        this.correctStructure();
     }
 
     divide(expressionAsString: string) {
-        let expression: MathNode = new MathNode('', expressionAsString);
+        const expression: MathNode = new MathNode('', expressionAsString);
 
         this.leftSide.divide(expression);
         this.rightSide.divide(expression);
+
+        this.correctStructure();
     }
 
     /**
@@ -40,7 +43,15 @@ export class Equation {
     }
 
     areMathNodesSibilings(firstNode: MathNode, secondNode: MathNode): boolean {
-        return this.leftSide.areChildrenSibilings(firstNode, secondNode) || this.rightSide.areChildrenSibilings(firstNode, secondNode);
+        return this.leftSide.areMathNodesSibilings(firstNode, secondNode) || this.rightSide.areMathNodesSibilings(firstNode, secondNode);
+    }
+
+    findParentNode(searchedMathNode: MathNode) {
+        const mathNode = this.leftSide.findParentNode(searchedMathNode);
+        if (mathNode !== null) {
+            return mathNode;
+        }
+        return this.rightSide.findParentNode(searchedMathNode);
     }
 
     deselectNodes(): void {
@@ -53,8 +64,8 @@ export class Equation {
     }
 
     correctStructure(): void {
-        while (this.leftSide.correctStructure()) { };
-        while (this.rightSide.correctStructure()) { };
+        while (this.leftSide.correctStructure()) { }
+        while (this.rightSide.correctStructure()) { }
     }
 
     getCopy(): Equation {
@@ -63,8 +74,8 @@ export class Equation {
 
     getVariable(): string {
         return (this.leftSide.findVariables() + this.rightSide.findVariables()).split('')
-            .filter(function (item, pos, self) {
-                return self.indexOf(item) == pos;
+            .filter((item, pos, self) => {
+                return self.indexOf(item) === pos;
             })
             .join('');
     }

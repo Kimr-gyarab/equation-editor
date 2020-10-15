@@ -1,3 +1,4 @@
+import { element } from 'protractor';
 import { v4 as uuidv4 } from 'uuid';
 import * as nerdamer from 'nerdamer/nerdamer.core.js';
 
@@ -7,6 +8,37 @@ export class MathNode {
     value: any;
     root: boolean;
     selected: boolean;
+
+    /**
+     * Returns true if both expressions are equal.
+     * @param exp1 first expression
+     * @param exp2 second expression
+     */
+    static areExpEqual(exp1: MathNode, exp2: MathNode): boolean {
+        const exp1AsString = exp1.toString();
+        const exp2AsString = exp2.toString();
+
+        const e1 = nerdamer(exp1AsString.toString(), undefined, 'expand');
+        const e2 = nerdamer(exp2AsString.toString(), undefined, 'expand');
+        const diff = `${e1.text()} - (${e2.text()})`;
+
+        return nerdamer(diff).text() === '0';
+    }
+
+    /**
+     * Returns true when absolute values of first and second expression are equal.
+     * @param exp1 first expression
+     * @param exp2 second expression
+     */
+    static areAbsExpEqual(exp1: MathNode, exp2: MathNode): boolean {
+        const exp1AsString = exp1.toString();
+        const exp2AsString = exp2.toString();
+        const e1 = nerdamer(exp1AsString.toString(), undefined, 'expand');
+        const e2 = nerdamer(exp2AsString.toString(), undefined, 'expand');
+        const diff = `abs(${e1.text()}) - abs(${e2.text()})`;
+
+        return nerdamer(diff).text() === '0';
+    }
 
     constructor(sign: string = '', value: any = '', root: boolean = false) {
         this.uuid = uuidv4();
@@ -22,18 +54,17 @@ export class MathNode {
                         this.sign = '-';
                         this.value = this.value.substring(1);
                     } else {
-                        this.value = [new MathNode('-', this.value.substring(1))]
+                        this.value = [new MathNode('-', this.value.substring(1))];
                     }
 
                 } else {
                     this.corectMathNode();
                 }
-            }
-            if (this.sign === '') {
-                this.sign = '+';
-            }
+            }   
         }
-
+        if (this.sign === '') {
+            this.sign = '+';
+        }
     }
 
     /**
@@ -43,10 +74,10 @@ export class MathNode {
         let newValue: string = this.value.split(' ').join('');
         let toReplace = newValue.match(/([a-z0-9\)][a-z\(])|([a-z\)][0-9a-z\(])/ig);
         while (toReplace !== null) {
-            for (let j = 0; j < toReplace.length; j++) {
-                let replacement = toReplace[j].charAt(0) + '*' + toReplace[j].charAt(1);
-                newValue = newValue.replace(toReplace[j], replacement);
-            }
+            toReplace.forEach(element => {
+                const replacement = element.charAt(0) + '*' + element.charAt(1);
+                newValue = newValue.replace(element, replacement);
+            });
             toReplace = newValue.match(/([a-z0-9\)][a-z\(])|([a-z\)][0-9a-z\(])/ig);
         }
         return newValue;
@@ -57,10 +88,10 @@ export class MathNode {
      */
     corectMathNode(): void {
         let valAsString: string = this.value;
-        let brackets: number = 0;
-        let addition: boolean = false;
-        let multiplication: boolean = false;
-        let division: boolean = false;
+        let brackets = 0;
+        let addition = false;
+        let multiplication = false;
+        let division = false;
 
 
         if (valAsString.match(/[()]/g) !== null && valAsString.startsWith('(') && valAsString.endsWith(')')) {
@@ -68,27 +99,26 @@ export class MathNode {
                 valAsString = valAsString.substr(1, valAsString.length - 2);
             }
         }
-
-        for (let i = 0; i < valAsString.length; i++) {
-            if (valAsString[i] === '(') {
+        valAsString.split('').forEach(element => {
+            if (element === '(') {
                 brackets++;
             }
-            if (valAsString[i] === ')') {
+            if (element === ')') {
                 brackets--;
             }
 
             if (brackets === 0) {
-                if (valAsString[i] === '+' || valAsString[i] === '-') {
+                if (element === '+' || element === '-') {
                     addition = true;
                 }
-                if (valAsString[i] === '*') {
+                if (element === '*') {
                     multiplication = true;
                 }
-                if (valAsString[i] === '/') {
+                if (element === '/') {
                     division = true;
                 }
             }
-        }
+        });
 
         if (addition) {
             this.value = this.parse(0);
@@ -102,7 +132,7 @@ export class MathNode {
             this.value = this.parse(2);
 
             if (this.root === true) {
-                let newValue = this.getCopy();
+                const newValue = this.getCopy();
                 newValue.root = false;
                 newValue.sign = '+';
 
@@ -112,7 +142,7 @@ export class MathNode {
             if (valAsString.match(/[()]/g) !== null) {
                 this.value = (new MathNode('', valAsString.substr(1, valAsString.length - 2))).value;
             } else {
-                //possible problems
+                // possible problems
                 this.value = [new MathNode('', valAsString)];
             }
         }
@@ -123,35 +153,35 @@ export class MathNode {
      * @param operation 0 = addition/subtraction, 1 = multiplication, 2 = division
      */
     parse(operation: number): Array<MathNode> {
-        let valAsString: string = this.value;
-        let newValue = [];
-        let substring: string = '';
-        let brackets: number = 0;
+        let valAsString = this.value;
+        const newValue = [];
+        let substring = '';
+        let brackets = 0;
         if (valAsString.match(/[()]/g) !== null && valAsString.startsWith('(') && valAsString.endsWith(')')) {
             if (valAsString.match(/[()]/g).length === 2) {
                 valAsString = valAsString.substr(1, valAsString.length - 2);
             }
         }
-
-        for (let i = 0; i < valAsString.length; i++) {
-            if (valAsString[i] === '(') {
+        valAsString.split('').forEach((element: string) => {
+            if (element === '(') {
                 brackets++;
-            } else if (valAsString[i] === ')') {
+            } else if (element === ')') {
                 brackets--;
             }
-            if (this.checkSign(operation, valAsString[i]) && brackets === 0 && substring.length !== 0 && this.withoutSign(substring) !== '0') {
+            if (this.checkSign(operation, element) && brackets === 0 &&
+                substring.length !== 0 && this.withoutSign(substring) !== '0') {
                 newValue.push(new MathNode(this.extractSign(operation, substring), this.withoutSign(substring)));
                 substring = '';
             }
-            substring += valAsString[i];
-        }
+            substring += element;
+        });
         newValue.push(new MathNode(this.extractSign(operation, substring), this.withoutSign(substring)));
 
         return newValue;
     }
 
     /**
-     * Returns true when operation matches corresponding sign 
+     * Returns true when operation matches corresponding sign
      * @param operation 0 = addition/subtraction, 1 = multiplication, 2 = division
      * @param sign string contianig sign
      */
@@ -169,11 +199,11 @@ export class MathNode {
     /**
      * Returns sign from string or sign according to operation.
      * @param operation 0 = addition/subtraction, 1 = multiplication, 2 = division
-     * @param string string which can contiain sign
+     * @param strVal string which can contiain sign
      */
-    extractSign(operation: number, string: string): string {
-        if (string.match(/^[+-/*]/) !== null) {
-            return string.substr(0, 1);
+    extractSign(operation: number, strVal: string): string {
+        if (strVal.match(/^[+-/*]/) !== null) {
+            return strVal.substr(0, 1);
         }
         switch (operation) {
             case 0:
@@ -186,84 +216,86 @@ export class MathNode {
     }
 
     /**
-     * Returns string without sign.
-     * @param string to return without sign.
+     * Returns strVal without sign.
+     * @param strVal string to return without sign.
      */
-    withoutSign(string: string): string {
-        if (string.match(/^[+-/*]/g) !== null) {
-            return string.substr(1);
+    withoutSign(strVal: string): string {
+        if (strVal.match(/^[+-/*]/g) !== null) {
+            return strVal.substr(1);
         }
-        return string;
+        return strVal;
     }
 
     /**
-     * Corrects structure of MathNodes – removes: 0 from addition, 1 form multiplication, unnecessary nesting; corrects replaced nodes and value of root.
+     * Corrects structure of MathNodes – removes: 0 from addition, 1 form multiplication, unnecessary nesting;
+     * corrects replaced nodes and value of root.
      * Returns whether any changes were made.
      */
     correctStructure(): boolean {
         let anyChanges = false;
+        //console.log(this);
+
         if (this.root) {
             if (this.value.length === 0) {
-                //adds 0 if there is no other node
+                // adds 0 if there is no other node
                 this.value.push(new MathNode('+', '0', false));
                 return false;
-            }/* else if (this.value[0].sign === '*' || this.value[0].sign === '/') {
-                //removes unnecessary nesting
-                
-                this.value = [this.value];
-            } */else if (typeof (this.value) === 'string') {
-                //correct type of root value
-                console.log(this.value);
+
+            } else if (typeof (this.value) === 'string') {
+                // correct type of root value
 
                 this.value = [this.getCopy()];
                 this.value[0].root = false;
                 anyChanges = true;
-                console.log(this.value);
             }
         }
 
-        //creates fraction from decimal
+        // creates fraction from decimal
         if (typeof (this.value) === 'string' && this.value.match(/[^0-9.]/) === null) {
             if (this.value.indexOf('.') !== -1) {
-                let frac = nerdamer.convertFromLaTeX(nerdamer.convertToLaTeX(this.value).toString()).toString();
+                const frac = nerdamer.convertFromLaTeX(nerdamer.convertToLaTeX(this.value).toString()).toString();
                 this.value = [new MathNode('', frac)];
                 anyChanges = true;
             } else {
-                if (this.value.toString() !== parseInt(this.value).toString()) {
+                if (this.value.toString() !== parseInt(this.value, 10).toString()) {
+                    this.value = '' + parseInt(this.value, 10);
                     anyChanges = true;
                 }
-                this.value = '' + parseInt(this.value);
             }
         }
 
         if (Array.isArray(this.value)) {
             if (this.value.length > 2 && this.value[0].sign === '/') {
-                let numerator = new MathNode('/', this.value.slice(0, this.value.length - 1));
-                let denominator = this.value[this.value.length - 1];
+                const numerator = new MathNode('/', this.value.slice(0, this.value.length - 1));
+                const denominator = this.value[this.value.length - 1];
+
                 this.value = [numerator, denominator];
                 anyChanges = true;
             }
         }
 
         if (Array.isArray(this.value)) {
-            if (this.value.length === 1 && this.value[0].sign !== '-' && !this.root) {
-                //removes unnecessary nesting
+            if (this.value.length === 1 && (this.sign + this.value[0].sign).match(/([-+\*][-+\*])|(\/\/)/) !== null && !this.root) {
+                // removes unnecessary nesting
+                if (this.value[0].sign === '-') {
+                    this.changeSign();
+                }
                 this.value = this.value[0].value;
                 anyChanges = true;
             }
         }
 
         if (Array.isArray(this.value)) {
-            //remove redundant 1 from multiplication
-            let newValue = [];
-            for (let i = 0; i < this.value.length; i++) {
-                if ((this.value[i].toString() !== '1' && this.value[0].sign === '*') ||
-                    (this.value[i].toString() !== '0' && this.value[0].sign !== '*')) {
-                    newValue.push(this.value[i]);
+            // remove redundant 1 from multiplication
+            const newValue = [];
+            this.getValueAsArray().forEach(element => {
+                if ((element.toString() !== '1' && this.value[0].sign === '*') ||
+                    (element.value !== '0' && this.value[0].sign !== '*')) {
+                    newValue.push(element);
                 } else {
                     anyChanges = true;
                 }
-            }
+            });
 
             if (newValue.length === 0 && this.value[0].sign === '*') {
                 this.value = '1';
@@ -276,23 +308,21 @@ export class MathNode {
         }
 
         if (Array.isArray(this.value)) {
+            // removes unnecessary newsting in multiplication
             if (this.value.length === 1 && this.value[0].sign === '*') {
-                if (typeof (this.value) !== 'string') {
-                    this.value[0].sign = this.value[0].value[0].sign;
-                    this.value[0].value = this.value[0].value[0].value;
-                }
-                
+                this.value = this.value[0].value;
+                anyChanges = true;
             }
         }
 
         if (Array.isArray(this.value)) {
-            //corrects replaced nodes
+            // corrects replaced nodes
             for (let i = 0; i < this.value.length; i++) {
                 if (this.value[i].selected) {
                     let arrVal = this.value[i].value;
                     if (typeof (this.value[i].value) === 'string') {
-
                         arrVal = [new MathNode('', this.value[i].value)];
+
                     } else {
                         if (this.sameOperation(this.value[i].sign, this.value[i].value[0].sign)) {
                             for (let j = 0; j < arrVal.length; j++) {
@@ -305,7 +335,8 @@ export class MathNode {
                 }
             }
         }
-        //recursively calls this function
+
+        // recursively calls this function
         this.getValueAsArray().forEach((element: MathNode) => {
             anyChanges = element.correctStructure() ? true : anyChanges;
         });
@@ -320,7 +351,7 @@ export class MathNode {
         if ((firstSign === '-' || firstSign === '/') && (secondSign === '*' || secondSign === '/')) {
             return true;
         }
-        return false
+        return false;
     }
 
     /**
@@ -328,25 +359,29 @@ export class MathNode {
      * @param expression to multiply with
      */
     multiply(expression: MathNode) {
+        console.log(expression.toString());
+        
         if (expression.toString() === '1') {
             return;
         }
         if (expression.toString() === '-1') {
-            this.value.forEach(element => {
+            this.value.forEach((element: MathNode) => {
                 element.changeSign();
             });
             return;
         }
-        this.value.forEach(element => {
+        this.value.forEach((element: MathNode) => {
             if (Array.isArray(element.value)) {
                 if (element.value[0].sign === '/') {
                     this.multiplyDivision(element, new MathNode('*', expression.toString()));
 
                 } else if (element.value[0].sign === '*') {
                     element.value.push(new MathNode('*', expression.toString()));
+
                 } else {
-                    let prevVal = new MathNode('*', element.getCopy().value);
-                    element.value = [prevVal, new MathNode('*', expression.toString())];
+                    element.value = [new MathNode('*', element.toString()), new MathNode('*', expression.toString())];
+                    element.sign = '+';
+                    console.log(element.toString());
                 }
 
             } else if (element.value !== '0') {
@@ -355,8 +390,8 @@ export class MathNode {
                         element.changeSign();
                     }
                 } else {
-                    let prevVal = new MathNode('*', element.value);
-                    element.value = [prevVal, new MathNode('*', expression.toString())];
+                    element.value = [new MathNode('*', element.toString()), new MathNode('*', expression.toString())];
+                    element.sign = '+';
                 }
             }
         });
@@ -370,7 +405,7 @@ export class MathNode {
      */
     multiplyDivision(mathNode: MathNode, expression: MathNode) {
         if (Array.isArray(mathNode.value[1].value)) {
-            //Checks whether it is possible to cancel out expression and MathNode from denominatior
+            // Checks whether it is possible to cancel out expression and MathNode from denominatior
 
             for (let i = 0; i < mathNode.value[1].value.length; i++) {
                 if (MathNode.areExpEqual(mathNode.value[1].value[i], expression)) {
@@ -395,40 +430,20 @@ export class MathNode {
 
 
         if (MathNode.areExpEqual(mathNode.value[1], expression)) {
-            //Expression equils donominator and cancel each other out
-
+            // Expression equils donominator and cancel each other out
             mathNode.value = mathNode.value[0].value;
-        } else if (MathNode.areAbsExpEqual(mathNode.value[1], expression)) {
-            //Expression equils minus donominator and cancel each other out
 
+        } else if (MathNode.areAbsExpEqual(mathNode.value[1], expression)) {
+            // Expression equils minus donominator and cancel each other out
             mathNode.value = mathNode.value[0].value;
             mathNode.changeSign();
+
         } else {
-            if (Array.isArray(mathNode.value[0].value)) {
-                //Numerator is array
-                if (mathNode.value[0].value[0].sign === '*') {
-                    //Last executed operation in numerator would be multiplication
+            if (Array.isArray(mathNode.value[0].value) && mathNode.value[0].value[0].sign === '*') {
+                mathNode.value[0].value.splice(0, 0, expression);
 
-                    mathNode.value[0].value[0].sign = '*';
-                    mathNode.value[0].value.splice(0, 0, expression);
-
-                } else if (mathNode.value[0].value[0].sign === '/') {
-                    //Last executed operation in numerator would be division
-
-                    let prevVal = new MathNode('*', mathNode.value[0].toString());
-                    mathNode.value[0].value = [expression, prevVal];
-                } else {
-                    //Last executed operation in numerator would be addition or substraction
-
-                    let prevVal = new MathNode('*', mathNode.value[0].toString());
-                    mathNode.value[0].value = [expression, prevVal];
-
-                }
             } else {
-                //No better alternative found – expression multiplies nominator
-                let prevVal = new MathNode('*', mathNode.value[0].toString());
-                mathNode.value[0].value = [expression, prevVal];
-
+                mathNode.value[0].value = [expression, new MathNode('*', mathNode.value[0].toString())];
             }
         }
     }
@@ -442,12 +457,12 @@ export class MathNode {
             return;
         }
         if (expression.toString() === '-1') {
-            this.value.forEach(element => {
+            this.value.forEach((element: MathNode) => {
                 element.changeSign();
             });
             return;
         }
-        this.value.forEach(element => {
+        this.value.forEach((element: MathNode) => {
             if (Array.isArray(element.value)) {
 
                 if (element.value[0].sign === '*') {
@@ -456,7 +471,6 @@ export class MathNode {
                     this.divideDivision(element, expression.getCopy());
                 } else {
                     element.value = [new MathNode('/', element.value), new MathNode('/', expression.toString())];
-
                 }
             } else if (element.value !== '0') {
                 if (MathNode.areExpEqual(element, expression)) {
@@ -467,14 +481,13 @@ export class MathNode {
                     element.changeSign();
                     element.value = '1';
                 } else {
-                    let tempExp = expression.getCopy();
+                    const tempExp = expression.getCopy();
                     if (expression.sign === '-') {
                         element.changeSign();
                         tempExp.changeSign();
                     }
 
                     element.value = [new MathNode('/', element.value), new MathNode('/', tempExp.toString())];
-
                 }
             }
         });
@@ -488,25 +501,25 @@ export class MathNode {
      */
     divideMultiplication(mathNode: MathNode, expression: MathNode) {
         for (let i = 0; i < mathNode.value.length; i++) {
-
             if (MathNode.areExpEqual(mathNode.value[i], expression)) {
                 mathNode.value.splice(i, 1);
                 return;
             }
+        }
 
+        for (let i = 0; i < mathNode.value.length; i++) {
             if (MathNode.areAbsExpEqual(mathNode.value[i], expression)) {
                 mathNode.changeSign();
                 mathNode.value.splice(i, 1);
                 return;
             }
         }
-        let tempExp = expression.getCopy();
+        const tempExp = expression.getCopy();
         if (expression.sign === '-') {
             mathNode.changeSign();
             tempExp.changeSign();
         }
         mathNode.value = [new MathNode('/', mathNode.value), new MathNode('/', tempExp.toString())];
-
     }
 
     /**
@@ -544,21 +557,11 @@ export class MathNode {
                     }
                 }
             }
-            if (Array.isArray(mathNode.value[1].value)) {
-                if (mathNode.value[1].value[0].sign === '*') {
-                    mathNode.value[1].value.push(new MathNode('*', expression.toString()));
-                } else if (mathNode.value[1].value[0].sign === '/') {
-                    let prevVal = new MathNode('*', mathNode.value[1].toString());
-                    mathNode.value[1].value = [prevVal, new MathNode('*', expression.toString())];
-                } else if (mathNode.value[1].value[0].sign === '+' || mathNode.value[1].value[0].sign === '-') {
-                    let prevVal = new MathNode('*', mathNode.value[1].value);
-                    mathNode.value[1].value = [prevVal, new MathNode('/', expression.toString())];
-                }
+            if (Array.isArray(mathNode.value[1].value) || mathNode.value[1].value[0].sign === '*') {
+                mathNode.value[1].value.push(new MathNode('*', expression.toString()));
             } else {
-                let prevVal = new MathNode('*', mathNode.value[1].value);
-                mathNode.value[1].value = [prevVal, new MathNode('*', expression.toString())];
+                mathNode.value[1].value = [new MathNode('*', mathNode.value[1].toString()), new MathNode('*', expression.toString())];
             }
-
         }
     }
 
@@ -575,51 +578,46 @@ export class MathNode {
 
     /**
      * Return true when searchedMathNode is child of this object
-     * @param searchedUUID 
+     * @param searchedUUID searchedUUID
      */
     isChildOf(searchedMathNode: MathNode): boolean {
-        if (Array.isArray(this.value)) {
-            for (let i = 0; i < this.value.length; i++) {
-                if (searchedMathNode.uuid === this.value[i].uuid) {
-                    return true;
-                };
+        for (const element of this.getValueAsArray()) {
+            if (element.uuid === searchedMathNode.uuid) {
+                return true;
             }
         }
         return false;
     }
 
     /**
-     * Returns parent of searchedMathNode. If none is found, then returns undefined.
-     * @param searchedMathNode 
+     * Returns parent of searchedMathNode. If none is found, then returns null.
+     * @param searchedMathNode searched MathNode
      */
-    findParent(searchedMathNode: MathNode): MathNode {
-        let valArray = this.getValueAsArray();
-        for (let i = 0; i < valArray.length; i++) {
-
-            if (valArray[i].uuid === searchedMathNode.uuid) {
+    findParentNode(searchedMathNode: MathNode): MathNode {
+        for (const element of this.getValueAsArray()) {
+            if (element.uuid === searchedMathNode.uuid) {
                 return this;
             }
         }
-        for (let i = 0; i < valArray.length; i++) {
-            if (valArray[i].findParent(searchedMathNode) !== undefined) {
-                return valArray[i].findParent(searchedMathNode);
+        for (const element of this.getValueAsArray()) {
+            if (element.findParentNode(searchedMathNode) !== null) {
+                return element.findParentNode(searchedMathNode);
             }
         }
-        return undefined;
+        return null;
     }
 
     /**
      * Checks whether firstMathNode and secondMathNode are childs of same MathNode.
-     * @param firstMathNode 
-     * @param secondMathNode 
+     * @param firstMathNode first MathNode
+     * @param secondMathNode second MathNode
      */
-    areChildrenSibilings(firstMathNode: MathNode, secondMathNode: MathNode) {
+    areMathNodesSibilings(firstMathNode: MathNode, secondMathNode: MathNode) {
         if (this.isChildOf(firstMathNode) && this.isChildOf(secondMathNode)) {
             return true;
         } else {
-            let valArray = this.getValueAsArray();
-            for (let i = 0; i < valArray.length; i++) {
-                if (valArray[i].areChildrenSibilings(firstMathNode, secondMathNode)) {
+            for (const element of this.getValueAsArray()) {
+                if (element.areMathNodesSibilings(firstMathNode, secondMathNode)) {
                     return true;
                 }
             }
@@ -665,20 +663,20 @@ export class MathNode {
      * Finds and returns string of all variables used in MathNode.
      */
     findVariables(): string {
-        //add err tooManyVars
+        // add err tooManyVars
         let variable = '';
         if (typeof (this.value) === 'string' && this.value.match(/[a-z]/ig) !== null) {
             variable = this.value.match(/[a-z]/ig).join('');
         } else if (Array.isArray(this.value)) {
-            //recursively calls this method
+            // recursively calls this method
 
-            for (let i = 0; i < this.value.length; i++) {
-                variable += this.value[i].findVariables();
-            }
+            this.getValueAsArray().forEach(element => {
+                variable += element.findVariables();
+            });
         }
         return variable.split('')
-            .filter(function (item, pos, self) {
-                return self.indexOf(item) == pos;
+            .filter((item, pos, self) => {
+                return self.indexOf(item) === pos;
             })
             .join('');
     }
@@ -690,11 +688,9 @@ export class MathNode {
         if (typeof (this.value) === 'string' && (this.value === '' || this.value.match(/([^a-zA-Z0-9.])/))) {
             return false;
         }
-        if (Array.isArray(this.value)) {
-            for (let i = 0; i < this.value.length; i++) {
-                if (!this.value[i].isValid()) {
-                    return false;
-                }
+        for (const element of this.getValueAsArray()) {
+            if (!element.isValid()) {
+                return false;
             }
         }
 
@@ -706,61 +702,32 @@ export class MathNode {
      * @param first when false string is in brackets
      */
     toString(first: boolean = true) {
-        let string = '';
+        let returnValue = '';
+        //console.log(this.value);
+
         if (Array.isArray(this.value)) {
             if (!first || this.sign.match(/([+*/])/) === null) {
-                string += this.sign;
+                returnValue += this.sign;
             }
             if ((this.value[0].sign !== '*' && !this.root) && !(this.value[0].sign === '/' && this.sign !== '/')
             ) {
-                string += '(';
+                returnValue += '(';
             }
 
             for (let i = 0; i < this.value.length; i++) {
-                string += this.value[i].toString(i === 0);
+                returnValue += this.value[i].toString(i === 0);
             }
             if ((this.value[0].sign !== '*' && !this.root) && !(this.value[0].sign === '/' && this.sign !== '/')
             ) {
-                string += ')';
+                returnValue += ')';
             }
         } else {
             if (!first || this.sign.match(/([+*/])/) === null) {
-                string += this.sign;
+                returnValue += this.sign;
             }
-            string += this.value;
+            returnValue += this.value;
         }
 
-        return string;
-    }
-
-    /**
-     * Returns true if both expressions are equal.
-     * @param exp1 first expression
-     * @param exp2 second expression
-     */
-    static areExpEqual(exp1: MathNode, exp2: MathNode): boolean {
-        let exp1AsString = exp1.toString();
-        let exp2AsString = exp2.toString();
-
-        let e1 = nerdamer(exp1AsString.toString(), undefined, "expand");
-        let e2 = nerdamer(exp2AsString.toString(), undefined, "expand");
-        let diff: string = `${e1.text()} - (${e2.text()})`;
-
-        return nerdamer(diff).text() === '0';
-    }
-
-    /**
-     * Returns true when absolute values of first and second expression are equal.
-     * @param exp1 first expression
-     * @param exp2 second expression
-     */
-    static areAbsExpEqual(exp1: MathNode, exp2: MathNode): boolean {
-        let exp1AsString = exp1.toString();
-        let exp2AsString = exp2.toString();
-        let e1 = nerdamer(exp1AsString.toString(), undefined, "expand");
-        let e2 = nerdamer(exp2AsString.toString(), undefined, "expand");
-        let diff: string = `abs(${e1.text()}) - abs(${e2.text()})`;
-
-        return nerdamer(diff).text() === '0';
+        return returnValue;
     }
 }

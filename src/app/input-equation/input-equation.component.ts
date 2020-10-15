@@ -41,8 +41,8 @@ export class InputEquationComponent implements AfterViewInit {
             return;
         }
 
-        let left = inputString.split('=')[0];
-        let right = inputString.split('=')[1];
+        const left = inputString.split('=')[0];
+        const right = inputString.split('=')[1];
 
         if (left.length === 0 || right.length === 0) {
             this.checkInput(false);
@@ -60,11 +60,11 @@ export class InputEquationComponent implements AfterViewInit {
     checkInput(equationExists: boolean): void {
         this.errMessage = '';
 
-        //invalid chars
-        let invalidChars = this.equationAsString.match(/[^a-z0-9+*/()=-\s.]/gi);
+        // invalid chars
+        const invalidChars = this.equationAsString.match(/[^a-z0-9+*/()=-\s.]/gi);
         if (invalidChars !== null) {
             if (invalidChars.length === 1) {
-                this.errMessage += `Rovnice nesmí obsahovat znak ${invalidChars[0]}.`
+                this.errMessage += `Rovnice nesmí obsahovat znak ${invalidChars[0]}.`;
             } else {
                 this.errMessage += `Rovnice nesmí obsahovat znaky`;
                 for (let i = 0; i < invalidChars.length; i++) {
@@ -75,8 +75,8 @@ export class InputEquationComponent implements AfterViewInit {
         }
 
         if (equationExists) {
-            let equationVariables = this.equation.getVariable();
-            
+            const equationVariables = this.equation.getVariable();
+
             if (equationVariables.length === 0) {
                 this.errMessage += 'Rovnice musí obsahovat jednu neznámou.\n';
             } else if (equationVariables.length > 1) {
@@ -84,12 +84,11 @@ export class InputEquationComponent implements AfterViewInit {
             }
 
             if (!this.equation.isValid()) {
-                this.errMessage += 'Rovnice obsahuje chybu.\n'
+                this.errMessage += 'Rovnice obsahuje chybu.\n';
             }
         } else {
-            let expression = (new MathNode('', this.equationAsString, true));
-            let equationVariables = expression.findVariables();
-            
+            const expression = (new MathNode('', this.equationAsString, true));
+            const equationVariables = expression.findVariables();
             if (equationVariables.length === 0) {
                 this.errMessage += 'Rovnice musí obsahovat jednu neznámou.\n';
             } else if (equationVariables.length > 1) {
@@ -98,9 +97,9 @@ export class InputEquationComponent implements AfterViewInit {
 
 
             if (!expression.isValid()) {
-                this.errMessage += 'Rovnice obsahuje chybu.\n'
+                this.errMessage += 'Rovnice obsahuje chybu.\n';
             }
-            this.errMessage += 'Rovnice není kompletní.\n'
+            this.errMessage += 'Rovnice není kompletní.\n';
         }
         this.errMessage = this.errMessage.substr(0, this.errMessage.length - 1);
     }
@@ -139,7 +138,7 @@ export class InputEquationComponent implements AfterViewInit {
             size = 2.5;
         }
 
-        size -= 0.05;        
+        size -= 0.05;
         return size + 'rem';
     }
 }
