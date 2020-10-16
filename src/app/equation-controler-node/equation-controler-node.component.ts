@@ -39,7 +39,9 @@ export class EquationControlerNodeComponent {
     }
 
     selectNode(item: MathNode) {
-        this.eventbus.emit(new EmitEvent(Events.NodeSelected, item));
+        if (item.toString() !== '0') {
+            this.eventbus.emit(new EmitEvent(Events.NodeSelected, item));
+        }   
     }
 
     isArray(nodeValue: any) {

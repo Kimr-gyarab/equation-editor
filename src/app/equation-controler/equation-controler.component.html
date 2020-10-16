@@ -24,7 +24,7 @@
     <button class="btn btn-secondary m-1" (click)="next()" [disabled]='removedEdits.length === 0'>Vpřed</button>
     <button class="btn btn-secondary m-1" (click)='clearSelection()'>Zrušit výběr</button>
     <h3>Upravit:</h3>
-    <input type="text" class="form-control col m-1" (input)="actualizeUserInput($event.target.value);">
+    <input type="text" class="form-control col m-1" (input)="actualizeUserInput($event.target.value);" (keyup.enter)="editEquation()">
 
     <div class="container-fluid">
         <div class="row align-items-start">

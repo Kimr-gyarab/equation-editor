@@ -1,4 +1,3 @@
-import { element } from 'protractor';
 import { v4 as uuidv4 } from 'uuid';
 import * as nerdamer from 'nerdamer/nerdamer.core.js';
 
@@ -60,7 +59,7 @@ export class MathNode {
                 } else {
                     this.corectMathNode();
                 }
-            }   
+            }
         }
         if (this.sign === '') {
             this.sign = '+';
@@ -250,6 +249,33 @@ export class MathNode {
             }
         }
 
+        if (Array.isArray(this.value)) {
+            // corrects replaced nodes
+            for (let i = 0; i < this.value.length; i++) {
+                if (this.value[i].selected) {
+                    let arrVal = this.value[i].value;
+                    if (this.value[i].toString() === '0') {
+                        this.value.splice(i, 1);
+                        anyChanges = true;
+                        continue;
+                    } else if ((this.sign + this.value[i].sign).match(/([-+][-+])|(\*\*)/) !== null) {
+                        console.log(this.value);
+                        for (let j = 0; j < arrVal.length; j++) {
+                            if (typeof arrVal[j] !== 'string') {
+                                this.value.splice(i + j, j === 0 ? 1 : 0, arrVal[j]);
+                            }
+
+                        }
+                    }
+                    if (typeof this.value[i] === 'object') {
+                        this.value[i].selected = false;
+                    }
+
+                    anyChanges = true;
+                }
+            }
+        }
+
         // creates fraction from decimal
         if (typeof (this.value) === 'string' && this.value.match(/[^0-9.]/) === null) {
             if (this.value.indexOf('.') !== -1) {
@@ -275,7 +301,7 @@ export class MathNode {
         }
 
         if (Array.isArray(this.value)) {
-            if (this.value.length === 1 && (this.sign + this.value[0].sign).match(/([-+\*][-+\*])|(\/\/)/) !== null && !this.root) {
+            if (this.value.length === 1 && (this.sign + this.value[0].sign).match(/([-+][-+\*])|(\/[+\/])|(\*[\*+])/) !== null && !this.root) {
                 // removes unnecessary nesting
                 if (this.value[0].sign === '-') {
                     this.changeSign();
@@ -307,40 +333,12 @@ export class MathNode {
             }
         }
 
-        if (Array.isArray(this.value)) {
-            // removes unnecessary newsting in multiplication
-            if (this.value.length === 1 && this.value[0].sign === '*') {
-                this.value = this.value[0].value;
-                anyChanges = true;
-            }
-        }
-
-        if (Array.isArray(this.value)) {
-            // corrects replaced nodes
-            for (let i = 0; i < this.value.length; i++) {
-                if (this.value[i].selected) {
-                    let arrVal = this.value[i].value;
-                    if (typeof (this.value[i].value) === 'string') {
-                        arrVal = [new MathNode('', this.value[i].value)];
-
-                    } else {
-                        if (this.sameOperation(this.value[i].sign, this.value[i].value[0].sign)) {
-                            for (let j = 0; j < arrVal.length; j++) {
-                                this.value.splice(i + j, j === 0 ? 1 : 0, arrVal[j]);
-                            }
-                        }
-                    }
-                    this.value[i].selected = false;
-                    anyChanges = true;
-                }
-            }
-        }
-
         // recursively calls this function
         this.getValueAsArray().forEach((element: MathNode) => {
             anyChanges = element.correctStructure() ? true : anyChanges;
         });
-
+        //console.log(this.getCopy());
+        
         return anyChanges;
     }
 
@@ -360,7 +358,7 @@ export class MathNode {
      */
     multiply(expression: MathNode) {
         console.log(expression.toString());
-        
+
         if (expression.toString() === '1') {
             return;
         }
@@ -395,6 +393,8 @@ export class MathNode {
                 }
             }
         });
+        console.log(this.toString());
+
         this.correctStructure();
     }
 
@@ -408,6 +408,9 @@ export class MathNode {
             // Checks whether it is possible to cancel out expression and MathNode from denominatior
 
             for (let i = 0; i < mathNode.value[1].value.length; i++) {
+                if (mathNode.value[1].value[i].sign === '/' && i === 0) {
+                    continue;
+                }
                 if (MathNode.areExpEqual(mathNode.value[1].value[i], expression)) {
                     mathNode.value[1].value.splice(i, 1);
                     if (mathNode.value[1].value.length === 0) {
@@ -417,6 +420,9 @@ export class MathNode {
                 }
             }
             for (let i = 0; i < mathNode.value[1].value.length; i++) {
+                if (mathNode.value[1].value[i].sign === '/' && i === 0) {
+                    continue;
+                }
                 if (MathNode.areAbsExpEqual(mathNode.value[1].value[i], expression)) {
                     mathNode.value[1].value.splice(i, 1);
                     mathNode.changeSign();
@@ -440,10 +446,10 @@ export class MathNode {
 
         } else {
             if (Array.isArray(mathNode.value[0].value) && mathNode.value[0].value[0].sign === '*') {
-                mathNode.value[0].value.splice(0, 0, expression);
+                mathNode.value[0].value.splice(0, 0, expression.getCopy());
 
             } else {
-                mathNode.value[0].value = [expression, new MathNode('*', mathNode.value[0].toString())];
+                mathNode.value[0].value = [new MathNode('*', expression.toString()), new MathNode('*', mathNode.value[0].toString())];
             }
         }
     }

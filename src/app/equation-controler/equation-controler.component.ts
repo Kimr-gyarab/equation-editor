@@ -190,40 +190,43 @@ export class EquationControlerComponent implements OnInit, AfterViewInit, OnDest
     }
 
     /**
-     * Replaces selected MathNodes by value of userInputExpression if they are equal.
+     * Replaces selected MathNodes by value of userInputExpression if possible.
      */
     editEquation() {
         this.checkInput(0);
 
         if (this.errMessage.length === 0) {
             let expression: MathNode = new MathNode('', this.userInputExpression);
-            console.log(expression);
 
-            // ????
             if (!Array.isArray(expression.value)) {
                 if (this.selection[0].sign === '/' && expression.sign === '-') {
                     expression = new MathNode('+', [expression]);
                 }
-                if (this.selection[0].sign !== '/') {
+                if (this.selection[0].sign.match(/[\*\/]/) === null) {
                     this.selection[0].sign = expression.sign;
                 }
-
-                this.equation.deselectNodes();
                 this.selection[0].value = expression.value;
             } else {
-                this.selection[0].sign = expression.value[0].sign;
-                this.selection[0].value = expression.value[0].value;
-            }
+                if (expression.value[0].sign === '/' || expression.value[0].sign === '+'|| expression.value[0].sign === '*') {
+                    this.selection[0].value = expression.value;
+                } else {
+                    this.selection[0].sign = expression.value[0].sign;
+                    this.selection[0].value = expression.value[0].value;
+                }
 
-            
+            }
+            console.log(expression.getCopy());
+
+
+            this.selection[0].setSelected(false);
 
             for (let i = 1; i < this.selection.length; i++) {
                 this.selection[i].value = '0';
             }
-            this.clearSelection();
             console.log(this.equation.toString());
-
             this.equation.correctStructure();
+            console.log(this.equation.toString());
+            this.clearSelection();
             this.addEdit();
         }
     }
