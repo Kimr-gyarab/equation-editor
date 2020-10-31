@@ -1,3 +1,4 @@
+import { faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
 import { MathNode } from './../equation/math-node';
 import { Equation } from './../equation/equation';
 import { Component, ElementRef, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
@@ -26,11 +27,13 @@ export class EquationControlerComponent implements OnInit, AfterViewInit, OnDest
     userInputMathNodeString: string;
     expressionPreviewWidth: number;
     errMessage: string;
+
     equationSign = '=';
+    faQuestionCircle = faQuestionCircle;
+    showFiller = true;
 
     constructor(private eventbus: EventBusService) {
-        this.equation = new Equation('1-(1+4*(2+9))', 'x2-((1+1+2)/2)/(2/3)-2');
-        // this.equation = new Equation('1/(2/3)', 'a/2/3');
+        this.equation = new Equation('1+(1+4*(2+9))', '2x-2');
         this.edits = [];
         this.removedEdits = [];
 
@@ -45,8 +48,8 @@ export class EquationControlerComponent implements OnInit, AfterViewInit, OnDest
 
     ngOnInit() {
         this.eventbusSub = this.eventbus.on(Events.EquationChanged, () => {
-            this.equation.correctStructure();
             this.clearSelection();
+            this.equation.correctStructure();
             this.addEdit();
         });
 
@@ -75,13 +78,8 @@ export class EquationControlerComponent implements OnInit, AfterViewInit, OnDest
 
             if (this.selection.length === 2 && this.selection[0].sign === '/') {
 
-                let fraction = this.equation.findParentNode(this.selection[0]);
+                const fraction = this.equation.findParentNode(this.selection[0]);
                 if (fraction !== null) {
-                    /*if (fraction.value[0] !== this.selection[0]) {
-                        const tempVal = this.selection[0];
-                        this.selection[0] = this.selection[1];
-                        this.selection[1] = tempVal;
-                    }*/
                     this.selection = [fraction];
                 }
             }
@@ -207,7 +205,7 @@ export class EquationControlerComponent implements OnInit, AfterViewInit, OnDest
                 }
                 this.selection[0].value = expression.value;
             } else {
-                if (expression.value[0].sign === '/' || expression.value[0].sign === '+'|| expression.value[0].sign === '*') {
+                if (expression.value[0].sign === '/' || expression.value[0].sign === '+' || expression.value[0].sign === '*') {
                     this.selection[0].value = expression.value;
                 } else {
                     this.selection[0].sign = expression.value[0].sign;
@@ -340,5 +338,9 @@ export class EquationControlerComponent implements OnInit, AfterViewInit, OnDest
         console.log(this.equation.toString());
         console.log(this.equation.leftSide);
         console.log(this.equation.rightSide);
+    }
+
+    scroll(el: HTMLElement) {
+        el.scrollIntoView();
     }
 }

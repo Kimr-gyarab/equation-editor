@@ -28,7 +28,7 @@ export class Equation {
 
     divide(expressionAsString: string) {
         const expression: MathNode = new MathNode('', expressionAsString);
-
+        
         this.leftSide.divide(expression);
         this.rightSide.divide(expression);
 
@@ -68,6 +68,9 @@ export class Equation {
         while (this.rightSide.correctStructure()) { }
     }
 
+    /**
+     * Returns copy of this.
+     */
     getCopy(): Equation {
         return new Equation(this.leftSide.toString(), this.rightSide.toString());
     }

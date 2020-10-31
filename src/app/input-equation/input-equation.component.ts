@@ -60,7 +60,6 @@ export class InputEquationComponent implements AfterViewInit {
     checkInput(equationExists: boolean): void {
         this.errMessage = '';
 
-        // invalid chars
         const invalidChars = this.equationAsString.match(/[^a-z0-9+*/()=-\s.]/gi);
         if (invalidChars !== null) {
             if (invalidChars.length === 1) {

@@ -1,9 +1,14 @@
 <div class="component">
-    <h1>Editor rovnic</h1>
+    <div style="display: flex; justify-content: space-between;">
+        <h1>Editor rovnic</h1>
+        <fa-icon [icon]="faQuestionCircle" size='3x' style="cursor: pointer;" (click)="scroll(help1)"></fa-icon>
+    </div>
+
     <app-input-equation></app-input-equation>
-    <h2>Řešit rovnici:</h2>
-
-
+    <div style="display: flex; justify-content: space-between;">
+        <h2>Řešit rovnici:</h2>
+        <fa-icon [icon]="faQuestionCircle" size='3x' style="cursor: pointer;" (click)="scroll(help2)"></fa-icon>
+    </div>
 
     <div class="around-equation-container m-1">
         <div cdkDropListGroup class="equation-container mx-auto m-1" cdkScrollable>
@@ -24,7 +29,8 @@
     <button class="btn btn-secondary m-1" (click)="next()" [disabled]='removedEdits.length === 0'>Vpřed</button>
     <button class="btn btn-secondary m-1" (click)='clearSelection()'>Zrušit výběr</button>
     <h3>Upravit:</h3>
-    <input type="text" class="form-control col m-1" (input)="actualizeUserInput($event.target.value);" (keyup.enter)="editEquation()">
+    <input type="text" class="form-control col m-1" (input)="actualizeUserInput($event.target.value);"
+        (keyup.enter)="editEquation()">
 
     <div class="container-fluid">
         <div class="row align-items-start">
@@ -36,7 +42,7 @@
         </div>
     </div>
 
-    
+
     <h3>Náhled:</h3>
     <div class="container-fluid  mb-5">
         <div class="row justify-content-between">
@@ -70,4 +76,113 @@
             </td>
         </tr>
     </table>
+
+    <h2>Nápověda</h2>
+    <h3 #help1>Vložení rovnice</h3>
+    <p>
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras eget dolor ligula. Donec pulvinar sed lectus ut
+        efficitur. Nulla facilisi. Sed vitae nibh non diam eleifend molestie et vel urna. Fusce lacinia ante non nisl
+        ornare, nec bibendum arcu hendrerit. Ut elementum, nunc ac consectetur interdum, enim enim vehicula purus, in
+        posuere ipsum ligula at leo. Morbi mattis ornare elit bibendum sagittis.
+
+        Nullam libero velit, bibendum eget tincidunt et, aliquet et purus. Nulla massa sem, mollis sed aliquet vitae,
+        ultrices in diam. Donec vel ex nunc. Fusce sed gravida libero, quis tristique lectus. Nam a vehicula purus,
+        vitae facilisis tellus. Pellentesque vitae ornare urna. Sed tristique egestas sem sit amet gravida. Curabitur
+        congue leo aliquam odio convallis, et sollicitudin magna condimentum. Phasellus non enim quis massa scelerisque
+        dictum. Nunc erat arcu, ultrices quis euismod vel, faucibus ut eros. Maecenas vestibulum vel enim non
+        scelerisque. Mauris sagittis sapien nec efficitur tincidunt. Suspendisse eget arcu quis ipsum euismod rutrum.
+
+        Curabitur malesuada pretium tristique. Proin euismod, justo nec auctor sodales, risus metus posuere nulla,
+        dignissim auctor libero est id sapien. Nulla molestie laoreet sapien, ac ullamcorper odio convallis id. Cras
+        vestibulum, ligula sed pulvinar interdum, diam lacus vestibulum lectus, eget pellentesque quam lorem vehicula
+        orci. Suspendisse aliquam ipsum a ipsum condimentum sodales eget ut nibh. Aliquam quis tincidunt neque. Morbi
+        lacinia odio mi, ac rutrum nunc porta at. Sed rutrum ipsum vitae venenatis sagittis. Quisque tincidunt imperdiet
+        eros, ac dictum augue commodo sed. Ut venenatis, erat eu euismod laoreet, sapien augue porta nulla, a commodo
+        risus tortor a eros. Praesent posuere, arcu nec suscipit molestie, elit arcu sollicitudin risus, sit amet
+        aliquam erat turpis vel mauris. Nullam egestas sagittis dui a dignissim. Aliquam eget rutrum sapien, non
+        tristique velit. Curabitur laoreet dui ut auctor gravida. Fusce vel interdum augue.
+
+        Curabitur mollis efficitur ligula at facilisis. Fusce quam nulla, faucibus a pellentesque sit amet, interdum
+        tempus justo. Pellentesque rhoncus eros eu nisl sollicitudin, sed rhoncus ipsum vestibulum. Fusce quam nibh,
+        feugiat vel tristique a, aliquet ac lectus. Morbi faucibus mauris id lectus tempor gravida. Mauris scelerisque
+        ut justo ac sodales. Donec dapibus risus id tristique dictum. Fusce ornare at nisl non interdum. Quisque commodo
+        mi vel volutpat aliquam. Vestibulum efficitur cursus lorem et molestie.
+
+        Proin massa nunc, mattis vitae vestibulum in, vulputate vitae massa. Sed sollicitudin in elit posuere gravida.
+        Nunc mi arcu, consectetur cursus massa et, fringilla tempor lacus. Suspendisse nec ligula metus. Ut sit amet
+        odio hendrerit, commodo sapien quis, eleifend neque. Pellentesque sit amet dapibus diam. Maecenas sed lacinia
+        quam, quis tempor lacus. Nulla feugiat vel sapien eu malesuada. Pellentesque a nunc sem. Vivamus aliquet arcu
+        quis sapien varius, eu maximus justo pharetra.
+    </p>
+    <h3 #help2>Řešení rovnice</h3>
+    <p>
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras eget dolor ligula. Donec pulvinar sed lectus ut
+        efficitur. Nulla facilisi. Sed vitae nibh non diam eleifend molestie et vel urna. Fusce lacinia ante non nisl
+        ornare, nec bibendum arcu hendrerit. Ut elementum, nunc ac consectetur interdum, enim enim vehicula purus, in
+        posuere ipsum ligula at leo. Morbi mattis ornare elit bibendum sagittis.
+
+        Nullam libero velit, bibendum eget tincidunt et, aliquet et purus. Nulla massa sem, mollis sed aliquet vitae,
+        ultrices in diam. Donec vel ex nunc. Fusce sed gravida libero, quis tristique lectus. Nam a vehicula purus,
+        vitae facilisis tellus. Pellentesque vitae ornare urna. Sed tristique egestas sem sit amet gravida. Curabitur
+        congue leo aliquam odio convallis, et sollicitudin magna condimentum. Phasellus non enim quis massa scelerisque
+        dictum. Nunc erat arcu, ultrices quis euismod vel, faucibus ut eros. Maecenas vestibulum vel enim non
+        scelerisque. Mauris sagittis sapien nec efficitur tincidunt. Suspendisse eget arcu quis ipsum euismod rutrum.
+
+        Curabitur malesuada pretium tristique. Proin euismod, justo nec auctor sodales, risus metus posuere nulla,
+        dignissim auctor libero est id sapien. Nulla molestie laoreet sapien, ac ullamcorper odio convallis id. Cras
+        vestibulum, ligula sed pulvinar interdum, diam lacus vestibulum lectus, eget pellentesque quam lorem vehicula
+        orci. Suspendisse aliquam ipsum a ipsum condimentum sodales eget ut nibh. Aliquam quis tincidunt neque. Morbi
+        lacinia odio mi, ac rutrum nunc porta at. Sed rutrum ipsum vitae venenatis sagittis. Quisque tincidunt imperdiet
+        eros, ac dictum augue commodo sed. Ut venenatis, erat eu euismod laoreet, sapien augue porta nulla, a commodo
+        risus tortor a eros. Praesent posuere, arcu nec suscipit molestie, elit arcu sollicitudin risus, sit amet
+        aliquam erat turpis vel mauris. Nullam egestas sagittis dui a dignissim. Aliquam eget rutrum sapien, non
+        tristique velit. Curabitur laoreet dui ut auctor gravida. Fusce vel interdum augue.
+
+        Curabitur mollis efficitur ligula at facilisis. Fusce quam nulla, faucibus a pellentesque sit amet, interdum
+        tempus justo. Pellentesque rhoncus eros eu nisl sollicitudin, sed rhoncus ipsum vestibulum. Fusce quam nibh,
+        feugiat vel tristique a, aliquet ac lectus. Morbi faucibus mauris id lectus tempor gravida. Mauris scelerisque
+        ut justo ac sodales. Donec dapibus risus id tristique dictum. Fusce ornare at nisl non interdum. Quisque commodo
+        mi vel volutpat aliquam. Vestibulum efficitur cursus lorem et molestie.
+
+        Proin massa nunc, mattis vitae vestibulum in, vulputate vitae massa. Sed sollicitudin in elit posuere gravida.
+        Nunc mi arcu, consectetur cursus massa et, fringilla tempor lacus. Suspendisse nec ligula metus. Ut sit amet
+        odio hendrerit, commodo sapien quis, eleifend neque. Pellentesque sit amet dapibus diam. Maecenas sed lacinia
+        quam, quis tempor lacus. Nulla feugiat vel sapien eu malesuada. Pellentesque a nunc sem. Vivamus aliquet arcu
+        quis sapien varius, eu maximus justo pharetra.
+    </p>
+    <p>
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras eget dolor ligula. Donec pulvinar sed lectus ut
+        efficitur. Nulla facilisi. Sed vitae nibh non diam eleifend molestie et vel urna. Fusce lacinia ante non nisl
+        ornare, nec bibendum arcu hendrerit. Ut elementum, nunc ac consectetur interdum, enim enim vehicula purus, in
+        posuere ipsum ligula at leo. Morbi mattis ornare elit bibendum sagittis.
+
+        Nullam libero velit, bibendum eget tincidunt et, aliquet et purus. Nulla massa sem, mollis sed aliquet vitae,
+        ultrices in diam. Donec vel ex nunc. Fusce sed gravida libero, quis tristique lectus. Nam a vehicula purus,
+        vitae facilisis tellus. Pellentesque vitae ornare urna. Sed tristique egestas sem sit amet gravida. Curabitur
+        congue leo aliquam odio convallis, et sollicitudin magna condimentum. Phasellus non enim quis massa scelerisque
+        dictum. Nunc erat arcu, ultrices quis euismod vel, faucibus ut eros. Maecenas vestibulum vel enim non
+        scelerisque. Mauris sagittis sapien nec efficitur tincidunt. Suspendisse eget arcu quis ipsum euismod rutrum.
+
+        Curabitur malesuada pretium tristique. Proin euismod, justo nec auctor sodales, risus metus posuere nulla,
+        dignissim auctor libero est id sapien. Nulla molestie laoreet sapien, ac ullamcorper odio convallis id. Cras
+        vestibulum, ligula sed pulvinar interdum, diam lacus vestibulum lectus, eget pellentesque quam lorem vehicula
+        orci. Suspendisse aliquam ipsum a ipsum condimentum sodales eget ut nibh. Aliquam quis tincidunt neque. Morbi
+        lacinia odio mi, ac rutrum nunc porta at. Sed rutrum ipsum vitae venenatis sagittis. Quisque tincidunt imperdiet
+        eros, ac dictum augue commodo sed. Ut venenatis, erat eu euismod laoreet, sapien augue porta nulla, a commodo
+        risus tortor a eros. Praesent posuere, arcu nec suscipit molestie, elit arcu sollicitudin risus, sit amet
+        aliquam erat turpis vel mauris. Nullam egestas sagittis dui a dignissim. Aliquam eget rutrum sapien, non
+        tristique velit. Curabitur laoreet dui ut auctor gravida. Fusce vel interdum augue.
+
+        Curabitur mollis efficitur ligula at facilisis. Fusce quam nulla, faucibus a pellentesque sit amet, interdum
+        tempus justo. Pellentesque rhoncus eros eu nisl sollicitudin, sed rhoncus ipsum vestibulum. Fusce quam nibh,
+        feugiat vel tristique a, aliquet ac lectus. Morbi faucibus mauris id lectus tempor gravida. Mauris scelerisque
+        ut justo ac sodales. Donec dapibus risus id tristique dictum. Fusce ornare at nisl non interdum. Quisque commodo
+        mi vel volutpat aliquam. Vestibulum efficitur cursus lorem et molestie.
+
+        Proin massa nunc, mattis vitae vestibulum in, vulputate vitae massa. Sed sollicitudin in elit posuere gravida.
+        Nunc mi arcu, consectetur cursus massa et, fringilla tempor lacus. Suspendisse nec ligula metus. Ut sit amet
+        odio hendrerit, commodo sapien quis, eleifend neque. Pellentesque sit amet dapibus diam. Maecenas sed lacinia
+        quam, quis tempor lacus. Nulla feugiat vel sapien eu malesuada. Pellentesque a nunc sem. Vivamus aliquet arcu
+        quis sapien varius, eu maximus justo pharetra.
+    </p>
 </div>

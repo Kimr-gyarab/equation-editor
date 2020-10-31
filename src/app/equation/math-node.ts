@@ -232,7 +232,6 @@ export class MathNode {
      */
     correctStructure(): boolean {
         let anyChanges = false;
-        //console.log(this);
 
         if (this.root) {
             if (this.value.length === 0) {
@@ -253,13 +252,12 @@ export class MathNode {
             // corrects replaced nodes
             for (let i = 0; i < this.value.length; i++) {
                 if (this.value[i].selected) {
-                    let arrVal = this.value[i].value;
+                    const arrVal = this.value[i].value;
                     if (this.value[i].toString() === '0') {
                         this.value.splice(i, 1);
                         anyChanges = true;
                         continue;
                     } else if ((this.sign + this.value[i].sign).match(/([-+][-+])|(\*\*)/) !== null) {
-                        console.log(this.value);
                         for (let j = 0; j < arrVal.length; j++) {
                             if (typeof arrVal[j] !== 'string') {
                                 this.value.splice(i + j, j === 0 ? 1 : 0, arrVal[j]);
@@ -301,7 +299,8 @@ export class MathNode {
         }
 
         if (Array.isArray(this.value)) {
-            if (this.value.length === 1 && (this.sign + this.value[0].sign).match(/([-+][-+\*])|(\/[+\/])|(\*[\*+])/) !== null && !this.root) {
+            if (this.value.length === 1 && !this.root &&
+                (this.sign + this.value[0].sign).match(/([-+][-+\*])|(\/[+\/])|(\*[\*+])/) !== null) {
                 // removes unnecessary nesting
                 if (this.value[0].sign === '-') {
                     this.changeSign();
@@ -337,8 +336,6 @@ export class MathNode {
         this.getValueAsArray().forEach((element: MathNode) => {
             anyChanges = element.correctStructure() ? true : anyChanges;
         });
-        //console.log(this.getCopy());
-        
         return anyChanges;
     }
 
@@ -643,7 +640,6 @@ export class MathNode {
             } else {
                 return [];
             }
-
         }
     }
 
@@ -709,7 +705,6 @@ export class MathNode {
      */
     toString(first: boolean = true) {
         let returnValue = '';
-        //console.log(this.value);
 
         if (Array.isArray(this.value)) {
             if (!first || this.sign.match(/([+*/])/) === null) {

@@ -10,24 +10,26 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { InputEquationComponent } from './input-equation/input-equation.component';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    EquationControlerComponent,
-    EquationControlerNodeComponent,
-    InputEquationComponent
-  ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    BrowserAnimationsModule,
-    BrowserAnimationsModule,
-    DragDropModule,
-    KatexModule,
-    NgbModule,
-  ],
-  providers: [],
-  bootstrap: [AppComponent]
+    declarations: [
+        AppComponent,
+        EquationControlerComponent,
+        EquationControlerNodeComponent,
+        InputEquationComponent
+    ],
+    imports: [
+        BrowserModule,
+        AppRoutingModule,
+        BrowserAnimationsModule,
+        BrowserAnimationsModule,
+        DragDropModule,
+        KatexModule,
+        FontAwesomeModule,
+        NgbModule,
+    ],
+    providers: [],
+    bootstrap: [AppComponent]
 })
 export class AppModule { }

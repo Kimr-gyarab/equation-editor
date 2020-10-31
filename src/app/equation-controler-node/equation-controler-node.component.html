@@ -1,6 +1,6 @@
 <div cdkDropList cdkDropListOrientation="horizontal" [cdkDropListData]="node" class="node-list noselect"
     [ngClass]="{'fraction': node.value[0].sign === '/', 'selected': node.selected}" (cdkDropListDropped)="drop($event)">
-    
+
     <div [ngClass]="getCssClasses(item, i)" *ngFor="let item of node.value; let i = index" cdkDrag
         (click)='selectNode(item)' [cdkDragDisabled]="isDisabled(item)">
 
