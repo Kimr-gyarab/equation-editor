@@ -252,6 +252,7 @@ export class MathNode {
             // corrects replaced nodes
             for (let i = 0; i < this.value.length; i++) {
                 if (this.value[i].selected) {
+
                     const arrVal = this.value[i].value;
                     if (this.value[i].toString() === '0') {
                         this.value.splice(i, 1);
@@ -281,7 +282,7 @@ export class MathNode {
                 this.value = [new MathNode('', frac)];
                 anyChanges = true;
             } else {
-                if (this.value.toString() !== parseInt(this.value, 10).toString()) {
+                if (this.value.toString() !== '' && this.value.toString() !== parseInt(this.value, 10).toString()) {
                     this.value = '' + parseInt(this.value, 10);
                     anyChanges = true;
                 }

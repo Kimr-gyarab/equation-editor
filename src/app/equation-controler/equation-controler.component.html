@@ -17,7 +17,7 @@
                 </app-equation-controler-node>
             </div>
             <div class="equation-sign noselect">
-                <ng-katex [equation]=equationSign style="font-size: calcEditorFontSize();"></ng-katex>
+                <ng-katex [equation]=equationSign [ngStyle]="{'font-size': calcEditorFontSize()}"></ng-katex>
             </div>
             <div class="equation-side" id='right'>
                 <app-equation-controler-node [node]=equation.rightSide [fontSize]='calcEditorFontSize()'>
@@ -80,109 +80,69 @@
     <h2>Nápověda</h2>
     <h3 #help1>Vložení rovnice</h3>
     <p>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras eget dolor ligula. Donec pulvinar sed lectus ut
-        efficitur. Nulla facilisi. Sed vitae nibh non diam eleifend molestie et vel urna. Fusce lacinia ante non nisl
-        ornare, nec bibendum arcu hendrerit. Ut elementum, nunc ac consectetur interdum, enim enim vehicula purus, in
-        posuere ipsum ligula at leo. Morbi mattis ornare elit bibendum sagittis.
-
-        Nullam libero velit, bibendum eget tincidunt et, aliquet et purus. Nulla massa sem, mollis sed aliquet vitae,
-        ultrices in diam. Donec vel ex nunc. Fusce sed gravida libero, quis tristique lectus. Nam a vehicula purus,
-        vitae facilisis tellus. Pellentesque vitae ornare urna. Sed tristique egestas sem sit amet gravida. Curabitur
-        congue leo aliquam odio convallis, et sollicitudin magna condimentum. Phasellus non enim quis massa scelerisque
-        dictum. Nunc erat arcu, ultrices quis euismod vel, faucibus ut eros. Maecenas vestibulum vel enim non
-        scelerisque. Mauris sagittis sapien nec efficitur tincidunt. Suspendisse eget arcu quis ipsum euismod rutrum.
-
-        Curabitur malesuada pretium tristique. Proin euismod, justo nec auctor sodales, risus metus posuere nulla,
-        dignissim auctor libero est id sapien. Nulla molestie laoreet sapien, ac ullamcorper odio convallis id. Cras
-        vestibulum, ligula sed pulvinar interdum, diam lacus vestibulum lectus, eget pellentesque quam lorem vehicula
-        orci. Suspendisse aliquam ipsum a ipsum condimentum sodales eget ut nibh. Aliquam quis tincidunt neque. Morbi
-        lacinia odio mi, ac rutrum nunc porta at. Sed rutrum ipsum vitae venenatis sagittis. Quisque tincidunt imperdiet
-        eros, ac dictum augue commodo sed. Ut venenatis, erat eu euismod laoreet, sapien augue porta nulla, a commodo
-        risus tortor a eros. Praesent posuere, arcu nec suscipit molestie, elit arcu sollicitudin risus, sit amet
-        aliquam erat turpis vel mauris. Nullam egestas sagittis dui a dignissim. Aliquam eget rutrum sapien, non
-        tristique velit. Curabitur laoreet dui ut auctor gravida. Fusce vel interdum augue.
-
-        Curabitur mollis efficitur ligula at facilisis. Fusce quam nulla, faucibus a pellentesque sit amet, interdum
-        tempus justo. Pellentesque rhoncus eros eu nisl sollicitudin, sed rhoncus ipsum vestibulum. Fusce quam nibh,
-        feugiat vel tristique a, aliquet ac lectus. Morbi faucibus mauris id lectus tempor gravida. Mauris scelerisque
-        ut justo ac sodales. Donec dapibus risus id tristique dictum. Fusce ornare at nisl non interdum. Quisque commodo
-        mi vel volutpat aliquam. Vestibulum efficitur cursus lorem et molestie.
-
-        Proin massa nunc, mattis vitae vestibulum in, vulputate vitae massa. Sed sollicitudin in elit posuere gravida.
-        Nunc mi arcu, consectetur cursus massa et, fringilla tempor lacus. Suspendisse nec ligula metus. Ut sit amet
-        odio hendrerit, commodo sapien quis, eleifend neque. Pellentesque sit amet dapibus diam. Maecenas sed lacinia
-        quam, quis tempor lacus. Nulla feugiat vel sapien eu malesuada. Pellentesque a nunc sem. Vivamus aliquet arcu
-        quis sapien varius, eu maximus justo pharetra.
+    <p>
+        V horní části webové stránky se nachází řádek „Zadat rovnici“ pro zadání rovnice. Do něj se zapisuje rovnice,
+        která se vkládá do editoru. Pod tímto řádkem jsou dvě pole – levé zobrazuje náhled napsané rovnice a pravé pro
+        zobrazení případných chyb, které zápis rovnice obsahuje. Rovnice musí obsahovat rovnostní znaménko, dále alespoň
+        jeden prvek na každé straně rovnice a jednu neznámou vyjádřenou písmenem anglické abecedy. Rovnice ve správném
+        tvaru se do editoru vloží kliknutím na tlačítko „Použít“.
+    </p>
+    <p>
+        Vložená rovnice může obsahovat zlomky (zápis použitím znaménka „/“). Nesmí obsahovat neznámou nebo nulu ve
+        jmenovateli a vyšší mocninu neznámé, a to ani během řešení. Přestože aplikace umožňuje tento typ rovnice vložit
+        do editoru, neumožňuje její řešení.
     </p>
     <h3 #help2>Řešení rovnice</h3>
     <p>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras eget dolor ligula. Donec pulvinar sed lectus ut
-        efficitur. Nulla facilisi. Sed vitae nibh non diam eleifend molestie et vel urna. Fusce lacinia ante non nisl
-        ornare, nec bibendum arcu hendrerit. Ut elementum, nunc ac consectetur interdum, enim enim vehicula purus, in
-        posuere ipsum ligula at leo. Morbi mattis ornare elit bibendum sagittis.
-
-        Nullam libero velit, bibendum eget tincidunt et, aliquet et purus. Nulla massa sem, mollis sed aliquet vitae,
-        ultrices in diam. Donec vel ex nunc. Fusce sed gravida libero, quis tristique lectus. Nam a vehicula purus,
-        vitae facilisis tellus. Pellentesque vitae ornare urna. Sed tristique egestas sem sit amet gravida. Curabitur
-        congue leo aliquam odio convallis, et sollicitudin magna condimentum. Phasellus non enim quis massa scelerisque
-        dictum. Nunc erat arcu, ultrices quis euismod vel, faucibus ut eros. Maecenas vestibulum vel enim non
-        scelerisque. Mauris sagittis sapien nec efficitur tincidunt. Suspendisse eget arcu quis ipsum euismod rutrum.
-
-        Curabitur malesuada pretium tristique. Proin euismod, justo nec auctor sodales, risus metus posuere nulla,
-        dignissim auctor libero est id sapien. Nulla molestie laoreet sapien, ac ullamcorper odio convallis id. Cras
-        vestibulum, ligula sed pulvinar interdum, diam lacus vestibulum lectus, eget pellentesque quam lorem vehicula
-        orci. Suspendisse aliquam ipsum a ipsum condimentum sodales eget ut nibh. Aliquam quis tincidunt neque. Morbi
-        lacinia odio mi, ac rutrum nunc porta at. Sed rutrum ipsum vitae venenatis sagittis. Quisque tincidunt imperdiet
-        eros, ac dictum augue commodo sed. Ut venenatis, erat eu euismod laoreet, sapien augue porta nulla, a commodo
-        risus tortor a eros. Praesent posuere, arcu nec suscipit molestie, elit arcu sollicitudin risus, sit amet
-        aliquam erat turpis vel mauris. Nullam egestas sagittis dui a dignissim. Aliquam eget rutrum sapien, non
-        tristique velit. Curabitur laoreet dui ut auctor gravida. Fusce vel interdum augue.
-
-        Curabitur mollis efficitur ligula at facilisis. Fusce quam nulla, faucibus a pellentesque sit amet, interdum
-        tempus justo. Pellentesque rhoncus eros eu nisl sollicitudin, sed rhoncus ipsum vestibulum. Fusce quam nibh,
-        feugiat vel tristique a, aliquet ac lectus. Morbi faucibus mauris id lectus tempor gravida. Mauris scelerisque
-        ut justo ac sodales. Donec dapibus risus id tristique dictum. Fusce ornare at nisl non interdum. Quisque commodo
-        mi vel volutpat aliquam. Vestibulum efficitur cursus lorem et molestie.
-
-        Proin massa nunc, mattis vitae vestibulum in, vulputate vitae massa. Sed sollicitudin in elit posuere gravida.
-        Nunc mi arcu, consectetur cursus massa et, fringilla tempor lacus. Suspendisse nec ligula metus. Ut sit amet
-        odio hendrerit, commodo sapien quis, eleifend neque. Pellentesque sit amet dapibus diam. Maecenas sed lacinia
-        quam, quis tempor lacus. Nulla feugiat vel sapien eu malesuada. Pellentesque a nunc sem. Vivamus aliquet arcu
-        quis sapien varius, eu maximus justo pharetra.
+        V případě, že zápis rovnice neobsahuje žádné chyby, po kliknutí na tlačítko „Použít“ se vloží do pole „Řešit
+        rovnici“ (editor rovnice). Rovnici je možné řešit přemístěním některého z prvků v rámci jedné nebo obou stran
+        rovnice; vybráním a nahrazením několika prvků novými; vynásobením celé rovnice; vydělením celé rovnice nebo
+        výměnou stran rovnice.
     </p>
+
+    <h4>Přesun prvků</h4>
     <p>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras eget dolor ligula. Donec pulvinar sed lectus ut
-        efficitur. Nulla facilisi. Sed vitae nibh non diam eleifend molestie et vel urna. Fusce lacinia ante non nisl
-        ornare, nec bibendum arcu hendrerit. Ut elementum, nunc ac consectetur interdum, enim enim vehicula purus, in
-        posuere ipsum ligula at leo. Morbi mattis ornare elit bibendum sagittis.
-
-        Nullam libero velit, bibendum eget tincidunt et, aliquet et purus. Nulla massa sem, mollis sed aliquet vitae,
-        ultrices in diam. Donec vel ex nunc. Fusce sed gravida libero, quis tristique lectus. Nam a vehicula purus,
-        vitae facilisis tellus. Pellentesque vitae ornare urna. Sed tristique egestas sem sit amet gravida. Curabitur
-        congue leo aliquam odio convallis, et sollicitudin magna condimentum. Phasellus non enim quis massa scelerisque
-        dictum. Nunc erat arcu, ultrices quis euismod vel, faucibus ut eros. Maecenas vestibulum vel enim non
-        scelerisque. Mauris sagittis sapien nec efficitur tincidunt. Suspendisse eget arcu quis ipsum euismod rutrum.
-
-        Curabitur malesuada pretium tristique. Proin euismod, justo nec auctor sodales, risus metus posuere nulla,
-        dignissim auctor libero est id sapien. Nulla molestie laoreet sapien, ac ullamcorper odio convallis id. Cras
-        vestibulum, ligula sed pulvinar interdum, diam lacus vestibulum lectus, eget pellentesque quam lorem vehicula
-        orci. Suspendisse aliquam ipsum a ipsum condimentum sodales eget ut nibh. Aliquam quis tincidunt neque. Morbi
-        lacinia odio mi, ac rutrum nunc porta at. Sed rutrum ipsum vitae venenatis sagittis. Quisque tincidunt imperdiet
-        eros, ac dictum augue commodo sed. Ut venenatis, erat eu euismod laoreet, sapien augue porta nulla, a commodo
-        risus tortor a eros. Praesent posuere, arcu nec suscipit molestie, elit arcu sollicitudin risus, sit amet
-        aliquam erat turpis vel mauris. Nullam egestas sagittis dui a dignissim. Aliquam eget rutrum sapien, non
-        tristique velit. Curabitur laoreet dui ut auctor gravida. Fusce vel interdum augue.
-
-        Curabitur mollis efficitur ligula at facilisis. Fusce quam nulla, faucibus a pellentesque sit amet, interdum
-        tempus justo. Pellentesque rhoncus eros eu nisl sollicitudin, sed rhoncus ipsum vestibulum. Fusce quam nibh,
-        feugiat vel tristique a, aliquet ac lectus. Morbi faucibus mauris id lectus tempor gravida. Mauris scelerisque
-        ut justo ac sodales. Donec dapibus risus id tristique dictum. Fusce ornare at nisl non interdum. Quisque commodo
-        mi vel volutpat aliquam. Vestibulum efficitur cursus lorem et molestie.
-
-        Proin massa nunc, mattis vitae vestibulum in, vulputate vitae massa. Sed sollicitudin in elit posuere gravida.
-        Nunc mi arcu, consectetur cursus massa et, fringilla tempor lacus. Suspendisse nec ligula metus. Ut sit amet
-        odio hendrerit, commodo sapien quis, eleifend neque. Pellentesque sit amet dapibus diam. Maecenas sed lacinia
-        quam, quis tempor lacus. Nulla feugiat vel sapien eu malesuada. Pellentesque a nunc sem. Vivamus aliquet arcu
-        quis sapien varius, eu maximus justo pharetra.
+        Prvky rovnice (orámované šedou čarou) mohou být přesouvány, aby bylo možné rovnici řešit. Přesouvány mohou být v
+        jednom kroku také skupiny prvků. Ty se vybírají podle vnějšího orámování. Na orámovaném prvku nebo skupině
+        prvků, které chcete přetáhnut, stiskněte levé tlačítko myši a přetáhněte v rovnici do místa, kam chcete prvek
+        nebo skupinu prvků umístit. Při přetahování prvku přes rovnítko je potřeba, aby kurzor myši byl vodorovně v
+        úrovni znaménka rovnosti. Po přetažení přes rovnítko se znaménko přetahovaného prvku/skupiny prvků změní
+        automaticky z kladného na záporné a naopak.
     </p>
+
+    <h4>Nahrazení prvků</h4>
+    <p>
+        Prvky rovnice (orámované šedou čarou) je možné nahradit prvky se stejnou hodnotou. Nejprve je třeba vybrat prvky
+        k nahrazení kliknutím. Vybrat je možné všechny prvky s výjimkou nuly. Vybrané prvky mají světle modré pozadí.
+        Poté je možné napsat výraz, kterým budou nahrazeny vybrané prvky, do řádku „Upravit“.
+        V poli vlevo pod tímto řádkem se zobrazuje náhled napsaného výrazu a v poli vpravo se zobrazují chyby, pokud
+        výraz nějaké obsahuje. Když napsaný výraz neobsahuje chyby a má stejnou hodnotu jako výraz složený z vybraných
+        prvků, je možné stisknutím tlačítka provést nahrazení. Nerovnají-li se výrazy, zobrazí se to v poli pro chyby a
+        nahrazení nebude provedeno.
+    </p>
+    <h4>Vynásobení rovnice</h4>
+    <p>
+        Obě strany rovnice je také možné vynásobit. Výraz, kterým má být rovnice vynásobena, se zapisuje do stejného
+        řádku jako v případě nahrazení. Výraz nesmí obsahovat žádnou neznámou a nesmí být rovný nule. Vynásobení rovnice
+        proběhne po stisknutí tlačítka „Vynásobit“, neobsahuje-li výraz žádnou chybu.
+    </p>
+    <h4>Vydělení rovnice</h4>
+    <p>
+        Pro vydělení rovnice platí stejná pravidla, jako pro vynásobení. Vydělení proběhne po stisknutí tlačítka
+        „Vydělit“, neobsahuje-li výraz žádnou chybu.
+    </p>
+    <h4>Vyměnění stran rovnice</h4>
+    <p>
+        Poslední možností úpravy rovnice je prohození stran rovnice. To je možné provést stisknutím tlačítka „Prohodit
+        strany“.
+    </p>
+    <h4>Další funkce</h4>
+    
+    <ul>
+        <li>Zpět/Vpřed – umožňuje procházet provedené kroky v editoru rovnic</li>
+        <li>Zrušit výběr – zruší výběr prvků</li>
+        <li>Zobrazení postupu – všechny provedené změny jsou zaznamenány a je možné se na ně podívat</li>
+        <li>Odkaz na nápovědu – vložení rovnice i editor rovnic obsahuje nápovědu, na kterou je možné se dostat
+            kliknutím na ikonu otazníku v pravé části obrazovky</li>
+    </ul>
 </div>

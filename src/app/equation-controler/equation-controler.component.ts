@@ -207,23 +207,24 @@ export class EquationControlerComponent implements OnInit, AfterViewInit, OnDest
             } else {
                 if (expression.value[0].sign === '/' || expression.value[0].sign === '+' || expression.value[0].sign === '*') {
                     this.selection[0].value = expression.value;
+                    this.selection[0].setSelected(false);
                 } else {
-                    this.selection[0].sign = expression.value[0].sign;
-                    this.selection[0].value = expression.value[0].value;
+                    if (expression.value.length === 1) {
+                        this.selection[0].sign = expression.value[0].sign;
+                        this.selection[0].value = expression.value[0].value;
+                        this.selection[0].setSelected(false);
+                    } else {
+                        this.selection[0].value = expression.value;
+                    }
+
                 }
 
             }
-            console.log(expression.getCopy());
-
-
-            this.selection[0].setSelected(false);
 
             for (let i = 1; i < this.selection.length; i++) {
                 this.selection[i].value = '0';
             }
-            console.log(this.equation.toString());
             this.equation.correctStructure();
-            console.log(this.equation.toString());
             this.clearSelection();
             this.addEdit();
         }

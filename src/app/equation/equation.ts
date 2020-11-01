@@ -28,7 +28,7 @@ export class Equation {
 
     divide(expressionAsString: string) {
         const expression: MathNode = new MathNode('', expressionAsString);
-        
+
         this.leftSide.divide(expression);
         this.rightSide.divide(expression);
 
