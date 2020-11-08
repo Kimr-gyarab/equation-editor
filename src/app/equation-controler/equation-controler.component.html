@@ -3,9 +3,11 @@
         <h1>Editor rovnic</h1>
         <fa-icon [icon]="faQuestionCircle" size='3x' style="cursor: pointer;" (click)="scroll(help1)"></fa-icon>
     </div>
+    <div #input>
+        <app-input-equation></app-input-equation>
+    </div>
 
-    <app-input-equation></app-input-equation>
-    <div style="display: flex; justify-content: space-between;">
+    <div style="display: flex; justify-content: space-between;" #editor>
         <h2>Řešit rovnici:</h2>
         <fa-icon [icon]="faQuestionCircle" size='3x' style="cursor: pointer;" (click)="scroll(help2)"></fa-icon>
     </div>
@@ -25,20 +27,26 @@
             </div>
         </div>
     </div>
-    <button class="btn btn-secondary m-1" (click)="back()" [disabled]='edits.length < 2'>Zpět</button>
-    <button class="btn btn-secondary m-1" (click)="next()" [disabled]='removedEdits.length === 0'>Vpřed</button>
-    <button class="btn btn-secondary m-1" (click)='clearSelection()'>Zrušit výběr</button>
+    <button class="btn btn-secondary m-1" title="Vrátí poslední provedenou operaci" (click)="back()"
+        [disabled]='edits.length < 2'>Zpět</button>
+    <button class="btn btn-secondary m-1" title="Zruší vrácení provedené operace" (click)="next()"
+        [disabled]='removedEdits.length === 0'>Vpřed</button>
+    <button class="btn btn-secondary m-1" title="Zruší výběr vybraných prvků" (click)='clearSelection()'>Zrušit
+        výběr</button>
     <h3>Upravit:</h3>
     <input type="text" class="form-control col m-1" (input)="actualizeUserInput($event.target.value);"
         (keyup.enter)="editEquation()">
 
     <div class="container-fluid">
         <div class="row align-items-start">
-            <button class="btn btn-primary col-md-auto m-1" (click)="editEquation()">Nahradit</button>
-            <button class="btn btn-primary col-md-auto m-1" (click)="multiplyEquation()">Vynásobit rovnici</button>
-            <button class="btn btn-primary col-md-auto m-1" (click)="divideEquation()">Vydělit rovnici</button>
-            <button class="btn btn-primary col-md-auto m-1" (click)="swapSides()">Prohodit strany</button>
-            <button class="btn btn-primary col-md-auto m-1" (click)="print()">Vypsat</button>
+            <button class="btn btn-primary col-md-auto m-1" title="Nahradí vybrané prvky výrazem z řádku nad tlačítkem"
+                (click)="editEquation()">Nahradit</button>
+            <button class="btn btn-primary col-md-auto m-1" title="Vynásobí rovnici výrazem z řádku nad tlačítkem"
+                (click)="multiplyEquation()">Vynásobit rovnici</button>
+            <button class="btn btn-primary col-md-auto m-1" title="Vydělí rovnici výrazem z řádku nad tlačítkem"
+                (click)="divideEquation()">Vydělit rovnici</button>
+            <button class="btn btn-primary col-md-auto m-1" title="Prohodí strany rovnice"
+                (click)="swapSides()">Prohodit strany</button>
         </div>
     </div>
 
@@ -78,7 +86,10 @@
     </table>
 
     <h2>Nápověda</h2>
-    <h3 #help1>Vložení rovnice</h3>
+    <div style="display: flex; justify-content: space-between;" #editor>
+        <h3 #help1>Vložení rovnice</h3>
+        <fa-icon [icon]="faArrowUp" size='3x' style="cursor: pointer;" (click)="scroll(input)"></fa-icon>
+    </div>
     <p>
     <p>
         V horní části webové stránky se nachází řádek „Zadat rovnici“ pro zadání rovnice. Do něj se zapisuje rovnice,
@@ -92,7 +103,12 @@
         jmenovateli a vyšší mocninu neznámé, a to ani během řešení. Přestože aplikace umožňuje tento typ rovnice vložit
         do editoru, neumožňuje její řešení.
     </p>
-    <h3 #help2>Řešení rovnice</h3>
+
+    <div style="display: flex; justify-content: space-between;" #editor>
+        <h3 #help2>Řešení rovnice</h3>
+        <fa-icon [icon]="faArrowUp" size='3x' style="cursor: pointer;" (click)="scroll(editor)"></fa-icon>
+    </div>
+
     <p>
         V případě, že zápis rovnice neobsahuje žádné chyby, po kliknutí na tlačítko „Použít“ se vloží do pole „Řešit
         rovnici“ (editor rovnice). Rovnici je možné řešit přemístěním některého z prvků v rámci jedné nebo obou stran
@@ -137,7 +153,7 @@
         strany“.
     </p>
     <h4>Další funkce</h4>
-    
+
     <ul>
         <li>Zpět/Vpřed – umožňuje procházet provedené kroky v editoru rovnic</li>
         <li>Zrušit výběr – zruší výběr prvků</li>

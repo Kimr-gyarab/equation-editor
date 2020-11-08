@@ -141,7 +141,6 @@ export class MathNode {
             if (valAsString.match(/[()]/g) !== null) {
                 this.value = (new MathNode('', valAsString.substr(1, valAsString.length - 2))).value;
             } else {
-                // possible problems
                 this.value = [new MathNode('', valAsString)];
             }
         }

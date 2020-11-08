@@ -1,10 +1,11 @@
-import { faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
+import { faArrowAltCircleUp, faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
 import { MathNode } from './../equation/math-node';
 import { Equation } from './../equation/equation';
 import { Component, ElementRef, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { EventBusService, Events } from '../core/event-bus.service';
 import * as nerdamer from 'nerdamer';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
     selector: 'app-equation-controler',
@@ -30,10 +31,11 @@ export class EquationControlerComponent implements OnInit, AfterViewInit, OnDest
 
     equationSign = '=';
     faQuestionCircle = faQuestionCircle;
+    faArrowUp = faArrowAltCircleUp;
     showFiller = true;
+    paramEquation: string;
 
-    constructor(private eventbus: EventBusService) {
-        this.equation = new Equation('1+(1+4*(2+9))', '2x-2');
+    constructor(private eventbus: EventBusService, private route: ActivatedRoute) {
         this.edits = [];
         this.removedEdits = [];
 
@@ -43,7 +45,21 @@ export class EquationControlerComponent implements OnInit, AfterViewInit, OnDest
         this.userInputMathNodeString = '';
         this.errMessage = '';
 
-        this.addEdit();
+        this.route.queryParams.subscribe(params => {
+            /* tslint:disable:no-string-literal */
+            this.paramEquation = params['equation'];
+            /* tslint:disable:no-string-literal */
+
+            if (this.paramEquation !== undefined) {
+                this.paramEquation = this.paramEquation.substring(1, this.paramEquation.length - 1);
+                console.log(decodeURIComponent(this.paramEquation));
+
+                this.equation = new Equation(this.paramEquation.split('=')[0], this.paramEquation.split('=')[1]);
+            } else {
+                this.equation = new Equation('1+(1+4*(2+9))', '2x-2');
+            }
+            this.addEdit();
+        });
     }
 
     ngOnInit() {

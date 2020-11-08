@@ -2,7 +2,10 @@ import { MathNode } from './../equation/math-node';
 import { Equation } from './../equation/equation';
 import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { EmitEvent, EventBusService, Events } from '../core/event-bus.service';
+import { Clipboard } from '@angular/cdk/clipboard';
 import * as nerdamer from 'nerdamer';
+import { Router } from '@angular/router';
+import { Location } from '@angular/common';
 
 @Component({
     selector: 'app-input-equation',
@@ -17,13 +20,15 @@ export class InputEquationComponent implements AfterViewInit {
     equationAsString: string;
     inputEquation: string;
     errMessage: string;
+    clipboardString: string;
 
     equationPreviewWidth: number;
 
-    constructor(private eventbus: EventBusService) {
+    constructor(private eventbus: EventBusService, private router: Router, private clipboard: Clipboard, private location: Location) {
         this.equationAsString = '';
         this.inputEquation = '';
         this.errMessage = '';
+        this.clipboardString = 'aaaaa';
         this.equationPreviewWidth = 0;
     }
 
@@ -59,6 +64,10 @@ export class InputEquationComponent implements AfterViewInit {
 
     checkInput(equationExists: boolean): void {
         this.errMessage = '';
+        if (this.equationAsString.length === 0) {
+            this.errMessage = 'Nejprve napiště rovnici';
+            return;
+        }
 
         const invalidChars = this.equationAsString.match(/[^a-z0-9+*/()=-\s.]/gi);
         if (invalidChars !== null) {
@@ -108,6 +117,9 @@ export class InputEquationComponent implements AfterViewInit {
         if (this.errMessage.length === 0) {
             this.equation.correctStructure();
             this.eventbus.emit(new EmitEvent(Events.NewEquationSubmited, this.equation.getCopy()));
+            this.errMessage = 'Rovnice byla vložena do editoru.';
+        } else {
+            this.errMessage += '\nRovnice nebyla vložena.';
         }
     }
 
@@ -139,5 +151,19 @@ export class InputEquationComponent implements AfterViewInit {
 
         size -= 0.05;
         return size + 'rem';
+    }
+
+    copyToClipboard() {
+        this.checkInput(true);
+        if (this.errMessage.length === 0) {
+            this.equation.correctStructure();
+            const parsedUrl = new URL(window.location.href);
+            const baseUrl = parsedUrl.origin;
+
+            this.clipboard.copy(baseUrl + '?equation="' + encodeURIComponent(this.equation.toString()) + '"');
+            this.errMessage = 'Rovnice byla zkopírována.';
+        } else {
+            this.errMessage += '\nRovnice nebyla zkopírována.';
+        }
     }
 }
